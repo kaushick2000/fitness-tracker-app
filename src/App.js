@@ -1,24 +1,28 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
-import './components/firebase'
-import SignupForm from './components/signup'; 
-import LoginForm from './components/login'; 
-import './styles/dashboard.css';  
+import './components/firebase'; // Import Firebase initialization
+import SignupForm from './components/signup';
+import LoginForm from './components/login';
 import Dashboard from './components/dashboard';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; // Import react-toastify CSS
+import './styles/dashboard.css'; // Import dashboard CSS
+
 function App() {
   return (
-    <div className="App">
-      <Router>
+    <Router>
       <div className="App">
+        <ToastContainer />
         <Routes>
-          <Route path="/signup" element={<SignupForm />} /> 
-          <Route path="/login" element={<LoginForm />} /> 
+          <Route path="/signup" element={<SignupForm />} />
+          <Route path="/login" element={<LoginForm />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          
-          </Routes>
+          {/* Default route redirects to /login */}
+          <Route path="/" element={<Navigate to="/login" replace />} />
+        </Routes>
       </div>
     </Router>
-    </div>
   );
 }
 
