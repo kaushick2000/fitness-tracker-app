@@ -1,58 +1,74 @@
-/* signup.css */
+/* signup.css (updated with login-specific considerations) */
+
+/* Reset default margins and ensure box-sizing is consistent */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Mobile-first approach: Base styles for small screens (up to 768px) */
 .signup-container {
-  max-width: 400px;
-  margin: 0 auto;
-  padding: 20px;
+  width: 90%; /* Use percentage for flexibility */
+  max-width: 400px; /* Limit max width for larger screens */
+  margin: 0 auto; /* Center horizontally */
+  padding: 1rem; /* Use rem for scalability */
   text-align: center;
 }
 
 .signup-container h2 {
-  margin-bottom: 20px;
+  margin-bottom: 1.5rem; /* Use rem for scalability */
   color: #333;
+  font-size: 1.5rem; /* Responsive font size */
 }
 
 .signup-form, .mfa-verification-container, .mfa-setup-container {
   background: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem; /* Use rem for scalability */
+  border-radius: 0.5rem; /* Use rem for scalability */
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1); /* Use rem for scalability */
 }
 
 .form-group {
-  margin-bottom: 15px;
+  margin-bottom: 1rem; /* Use rem for scalability */
   text-align: left;
 }
 
 .form-group label {
   display: block;
-  margin-bottom: 5px;
+  margin-bottom: 0.5rem; /* Use rem for scalability */
   font-weight: bold;
   color: #555;
+  font-size: 0.875rem; /* Responsive font size */
 }
 
 .form-group input {
   width: 100%;
-  padding: 8px;
+  padding: 0.75rem; /* Use rem for scalability */
   border: 1px solid #ddd;
-  border-radius: 4px;
+  border-radius: 0.25rem; /* Use rem for scalability */
   box-sizing: border-box;
+  font-size: 0.875rem; /* Responsive font size */
 }
 
 .form-group small {
   color: #777;
-  font-size: 12px;
+  font-size: 0.75rem; /* Responsive font size */
+}
+
+.signup-button, .secondary-button {
+  width: 100%;
+  padding: 0.75rem; /* Use rem for scalability */
+  border: none;
+  border-radius: 0.25rem; /* Use rem for scalability */
+  cursor: pointer;
+  font-size: 1rem; /* Responsive font size */
+  transition: background-color 0.3s;
 }
 
 .signup-button {
-  width: 100%;
-  padding: 10px;
   background-color: #007bff;
   color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.3s;
 }
 
 .signup-button:disabled {
@@ -65,43 +81,39 @@
 }
 
 .secondary-button {
-  width: 100%;
-  padding: 10px;
   background-color: #6c757d;
   color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
-  margin-top: 10px;
-  transition: background-color 0.3s;
+  margin-top: 1rem; /* Use rem for scalability */
 }
 
 .secondary-button:hover {
   background-color: #5a6268;
 }
 
+.error-message, .success-message {
+  padding: 0.75rem; /* Use rem for scalability */
+  margin-bottom: 1rem; /* Use rem for scalability */
+  border-radius: 0.25rem; /* Use rem for scalability */
+  border: 1px solid;
+  font-size: 0.875rem; /* Responsive font size */
+}
+
 .error-message {
   background-color: #ffebee;
   color: #c62828;
-  padding: 10px;
-  margin-bottom: 15px;
-  border-radius: 4px;
-  border: 1px solid #ffcdd2;
+  border-color: #ffcdd2;
 }
 
 .success-message {
   background-color: #e8f5e9;
   color: #2e7d32;
-  padding: 10px;
-  margin-bottom: 15px;
-  border-radius: 4px;
-  border: 1px solid #c8e6c9;
+  border-color: #c8e6c9;
 }
 
 /* Optional: Styling for react-toastify (if used) */
 .Toastify__toast {
-  border-radius: 4px;
+  border-radius: 0.25rem; /* Use rem for scalability */
+  font-size: 0.875rem; /* Responsive font size */
 }
 
 .Toastify__toast--error {
@@ -112,4 +124,47 @@
 .Toastify__toast--success {
   background: #e8f5e9;
   color: #2e7d32;
+}
+
+/* Tablet and Desktop (min-width: 768px) */
+@media (min-width: 768px) {
+  .signup-container {
+    width: 80%;
+    max-width: 500px; /* Slightly larger max-width for tablets/desktops */
+    padding: 2rem; /* Increase padding for larger screens */
+  }
+
+  .signup-container h2 {
+    font-size: 2rem; /* Larger heading for desktop */
+  }
+
+  .form-group label {
+    font-size: 1rem; /* Larger label text for desktop */
+  }
+
+  .form-group input, .form-group small {
+    font-size: 1rem; /* Larger input and small text for desktop */
+  }
+
+  .signup-button, .secondary-button {
+    font-size: 1.125rem; /* Larger button text for desktop */
+    padding: 1rem; /* Increase padding for larger screens */
+  }
+
+  .error-message, .success-message {
+    font-size: 1rem; /* Larger message text for desktop */
+  }
+}
+
+/* Large Desktop (min-width: 1024px) */
+@media (min-width: 1024px) {
+  .signup-container {
+    width: 70%;
+    max-width: 600px; /* Even larger max-width for large desktops */
+    padding: 2.5rem; /* Further increase padding for larger screens */
+  }
+
+  .signup-form, .mfa-verification-container, .mfa-setup-container {
+    padding: 2rem; /* Increase padding for larger screens */
+  }
 }
