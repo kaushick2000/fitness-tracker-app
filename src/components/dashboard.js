@@ -33,6 +33,10 @@ const Dashboard = () => {
     }
   };
 
+  const handleNavigateToProgress = () => {
+    navigate('/progress');
+  };
+
   if (loading) {
     return <div className="loading">Loading...</div>;
   }
@@ -54,6 +58,12 @@ const Dashboard = () => {
             <button className="action-button">Record Attendance</button>
             <button className="action-button">View Reports</button>
             <button className="action-button">Manage Users</button>
+            <button 
+              className="action-button progress-button"
+              onClick={handleNavigateToProgress}
+            >
+              View Progress
+            </button>
           </div>
         </div>
 
