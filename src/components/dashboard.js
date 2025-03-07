@@ -36,6 +36,9 @@ const Dashboard = () => {
   const handleNavigateToProgress = () => {
     navigate('/progress');
   };
+  const handleLogActivities = () => {
+    navigate('/activitylogging');
+  };
 
   if (loading) {
     return <div className="loading">Loading...</div>;
@@ -57,7 +60,7 @@ const Dashboard = () => {
           <div className="action-buttons">
             <button className="action-button">Record Attendance</button>
             <button className="action-button">View Reports</button>
-            <button className="action-button">Manage Users</button>
+            <button className="action-button"  onClick={handleLogActivities}>Log Activities</button>
             <button 
               className="action-button progress-button"
               onClick={handleNavigateToProgress}

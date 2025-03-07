@@ -4,7 +4,8 @@ import './App.css';
 import './components/Firebase'; // Import Firebase initialization
 import SignupForm from './components/Signup';
 import LoginForm from './components/Login';
-import Dashboard from './components/dashboard';
+import Dashboard from './components/Dashboard';
+import ActivityLogging from './components/ActivityLogging';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; // Import react-toastify CSS
 import './styles/dashboard.css'; // Import dashboard CSS
@@ -20,6 +21,7 @@ function App() {
           <Route path="/login" element={<LoginForm />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/progress" element={<ProgressDashboard/>} />
+          <Route path="/activitylogging" element={<ActivityLogging/>} />
           {/* Default route redirects to /login */}
           <Route path="/" element={<Navigate to="/login" replace />} />
         </Routes>
