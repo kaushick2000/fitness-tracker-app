@@ -282,3 +282,499 @@
       width: 100%;
     }
   }
+
+  /* Add to ActivityLogging.css */
+
+.fitness-tracker {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.header h1 {
+  color: #4285f4;
+  margin: 0;
+}
+
+.user-profile-summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.profile-button {
+  background-color: #4285f4;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.profile-button:hover {
+  background-color: #3367d6;
+}
+
+.date-selector {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 10px;
+}
+
+.date-input {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.view-toggle {
+  margin-left: auto;
+  display: flex;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid #4285f4;
+}
+
+.toggle-button {
+  padding: 8px 15px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.toggle-button.active {
+  background-color: #4285f4;
+  color: white;
+}
+
+/* Metrics section styling */
+.metrics-tracking {
+  margin-bottom: 20px;
+}
+
+.metrics-card {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.metrics-card h3 {
+  margin-top: 0;
+  color: #202124;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.metric {
+  text-align: center;
+  padding: 10px;
+  background-color: white;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.metric-value {
+  font-size: 24px;
+  font-weight: bold;
+  color: #4285f4;
+}
+
+.metric-label {
+  font-size: 14px;
+  color: #5f6368;
+  margin-top: 5px;
+}
+
+.metrics-forms {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+
+.metric-form {
+  display: flex;
+  gap: 10px;
+}
+
+.metric-input {
+  flex-grow: 1;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.metric-button {
+  background-color: #4285f4;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Recommendations styling */
+.ai-recommendations {
+  margin-bottom: 20px;
+}
+
+.recommendations-toggle {
+  width: 100%;
+  padding: 10px;
+  background-color: #34a853;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.recommendations-container {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.recommendations-container h3 {
+  margin-top: 0;
+  color: #202124;
+}
+
+.recommendations-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+.recommendation-card {
+  background-color: white;
+  border-radius: 6px;
+  padding: 15px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+}
+
+.recommendation-title {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.recommendation-bodypart {
+  color: #5f6368;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.recommendation-details {
+  color: #5f6368;
+  font-size: 14px;
+  margin-bottom: 15px;
+}
+
+.recommendation-add-button {
+  width: 100%;
+  padding: 8px;
+  background-color: #4285f4;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Search and exercise list styling */
+.search-controls {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.search-input, .body-part-select {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  flex-grow: 1;
+}
+
+.exercise-list-container {
+  margin-bottom: 20px;
+}
+
+.exercise-header {
+  display: grid;
+  grid-template-columns: 3fr 1fr 1fr 1fr;
+  padding: 10px;
+  background-color: #4285f4;
+  color: white;
+  border-radius: 4px 4px 0 0;
+  font-weight: bold;
+}
+
+.body-part-section {
+  margin-bottom: 20px;
+}
+
+.body-part-title {
+  padding: 10px;
+  background-color: #f1f3f4;
+  font-weight: bold;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.exercise-item {
+  display: grid;
+  grid-template-columns: 3fr 1fr 1fr 1fr;
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+  align-items: center;
+}
+
+.exercise-title {
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+
+.exercise-description {
+  color: #5f6368;
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.exercise-video-link {
+  color: #4285f4;
+  text-decoration: none;
+  font-size: 14px;
+  display: inline-block;
+  margin-bottom: 5px;
+}
+
+.exercise-metadata {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: #5f6368;
+}
+
+.exercise-rating {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.star-icon {
+  color: #fbbc05;
+}
+
+.add-button {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #4285f4;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Workout plan styling */
+.workout-plan {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.workout-plan h2 {
+  margin-top: 0;
+  color: #202124;
+}
+
+.workout-exercise {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  background-color: white;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.workout-exercise-title {
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+
+.workout-exercise-details {
+  color: #5f6368;
+  font-size: 14px;
+}
+
+.workout-exercise-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.edit-button, .remove-button {
+  background-color: transparent;
+  border: 1px solid #dadce0;
+  border-radius: 4px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.edit-button:hover {
+  background-color: #f1f3f4;
+}
+
+.remove-button {
+  color: #ea4335;
+}
+
+.remove-button:hover {
+  background-color: #fce8e6;
+}
+
+.workout-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin: 20px 0;
+}
+
+.summary-item {
+  background-color: white;
+  padding: 10px;
+  border-radius: 6px;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.summary-value {
+  font-size: 20px;
+  font-weight: bold;
+  color: #4285f4;
+}
+
+.workout-actions {
+  text-align: center;
+}
+
+.save-button {
+  background-color: #34a853;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+/* History view styling */
+.workout-history {
+  padding: 20px;
+}
+
+.history-empty {
+  text-align: center;
+  padding: 30px;
+  color: #5f6368;
+}
+
+.history-item {
+  background-color: white;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 15px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+}
+
+.history-date {
+  font-weight: 500;
+  margin-bottom: 10px;
+  color: #4285f4;
+}
+
+.history-exercises {
+  margin-bottom: 15px;
+}
+
+.history-exercise {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.history-exercise:last-child {
+  border-bottom: none;
+}
+
+.history-exercise-title {
+  font-weight: 500;
+}
+
+.history-exercise-details {
+  color: #5f6368;
+  font-size: 14px;
+}
+
+.history-summary {
+  display: flex;
+  justify-content: space-between;
+  background-color: #f1f3f4;
+  padding: 10px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+/* Data sync controls */
+.data-sync-controls {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.data-sync-controls h3 {
+  margin-top: 0;
+  color: #202124;
+}
+
+.sync-buttons {
+  display: flex;
+  gap: 15px;
+}
+
+.export-button, .import-button {
+  background-color: #4285f4;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  display: inline-block;
+  text-align: center;
+}
