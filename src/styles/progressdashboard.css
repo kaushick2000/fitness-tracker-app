@@ -1,110 +1,321 @@
+/* progressdashboard.css */
+.app-container {
+  display: flex;
+  min-height: 100vh;
+}
+
 .progress-dashboard-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-    font-family: Arial, sans-serif;
+  flex: 1;
+  margin-left: 230px; /* Match Nav width */
+  padding: 5px; /* Reduced padding to minimize gap */
+  font-family: Arial, sans-serif;
+  background-color: #f5f5f5;
+  max-height: 100vh; /* Ensure it fits within viewport height */
+  overflow: hidden; /* Prevent scrolling */
+}
+
+.dashboard-title {
+  text-align: left;
+  color: #333;
+  margin-bottom: 5px; /* Reduced margin */
+  font-size: 1.5em; /* Reduced font size */
+  font-weight: bold;
+}
+
+.dashboard-content {
+  display: flex;
+  flex-direction: column;
+  gap: 5px; /* Reduced gap */
+}
+
+.insights-section {
+  width: 100%;
+}
+
+.ai-insights {
+  background-color: #e6f2ff;
+  border-radius: 8px;
+  padding: 10px; /* Reduced padding */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Reduced shadow */
+  margin-bottom: 5px; /* Reduced margin */
+  height: 100px; /* Fixed height to fit insights */
+  overflow: hidden; /* Prevent overflow */
+}
+
+.ai-insights h3 {
+  color: #1a5f7a;
+  margin-bottom: 5px; /* Reduced margin */
+  font-size: 1em; /* Reduced font size */
+}
+
+.ai-insights ul {
+  list-style-type: disc;
+  padding-left: 15px; /* Reduced padding */
+  color: #2c3e50;
+  font-size: 0.8em; /* Reduced font size */
+  margin: 0;
+  line-height: 1.2; /* Tighter line spacing */
+}
+
+.main-content {
+  display: flex;
+  flex-direction: column;
+  gap: 5px; /* Reduced gap */
+}
+
+.chart-section {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Reduced shadow */
+  padding: 10px; /* Reduced padding */
+  text-align: right; /* Shift chart to the right */
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px; /* Reduced margin */
+}
+
+.chart-header h2 {
+  margin: 0;
+  font-size: 1em; /* Reduced font size */
+  color: #333;
+}
+
+.chart-controls label {
+  display: flex;
+  align-items: center;
+  gap: 5px; /* Reduced gap */
+}
+
+.chart-controls select {
+  padding: 3px; /* Reduced padding */
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 0.9em; /* Reduced font size */
+}
+
+.chart-container {
+  width: 90%; /* Increased width for larger chart */
+  height: 300px; /* Increased height for larger chart */
+  margin-left: auto; /* Center and shift right */
+}
+
+.metrics-selector {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Reduced shadow */
+  padding: 10px; /* Reduced padding */
+  max-height: 150px; /* Limit height to fit content */
+  overflow: auto; /* Allow internal scrolling if needed */
+}
+
+.metrics-selector h2 {
+  margin-bottom: 5px; /* Reduced margin */
+  color: #333;
+  font-size: 1em; /* Reduced font size */
+}
+
+.metrics-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 5px; /* Reduced gap */
+}
+
+.metric-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 5px; /* Reduced gap */
+  cursor: pointer;
+  font-size: 0.9em; /* Reduced font size */
+}
+
+.metric-checkbox input {
+  margin: 0;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+  .progress-dashboard-container {
+    margin-left: 0;
+    padding-top: 50px; /* Adjusted for mobile nav */
+    padding: 5px; /* Further reduced padding */
   }
-  
-  .dashboard-title {
-    text-align: center;
-    color: #333;
-    margin-bottom: 20px;
+
+  .dashboard-content {
+    flex-direction: column;
   }
-  
-  .ai-insights {
-    background-color: #e6f2ff;
-    border-radius: 8px;
-    padding: 15px;
-    margin-bottom: 20px;
-  }
-  
-  .ai-insights h3 {
-    color: #1a5f7a;
-    margin-bottom: 10px;
-  }
-  
-  .ai-insights ul {
-    list-style-type: disc;
-    padding-left: 20px;
-    color: #2c3e50;
-  }
-  
-  .chart-section {
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    margin-bottom: 20px;
-  }
-  
-  .chart-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-  }
-  
-  .chart-header h2 {
-    margin: 0;
-    font-size: 1.2em;
-    color: #333;
-  }
-  
-  .chart-controls label {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  
-  .chart-controls select {
-    padding: 5px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-  }
-  
-  .chart-container {
+
+  .insights-section {
     width: 100%;
-    height: 300px;
   }
-  
+
+  .chart-container {
+    width: 100%; /* Full width on mobile */
+    margin-left: 0; /* Reset on mobile */
+  }
+
+  .chart-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px; /* Reduced gap */
+  }
+
   .metrics-selector {
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    padding: 20px;
+    max-height: 100px; /* Further reduced height on mobile */
   }
-  
-  .metrics-selector h2 {
-    margin-bottom: 15px;
-    color: #333;
+}
+
+
+/* progressdashboard.css
+.app-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.progress-dashboard-container {
+  flex: 1;
+  margin-left: 230px; 
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  background-color: #f5f5f5;
+}
+
+.dashboard-title {
+  text-align: left;
+  color: #333;
+  margin-bottom: 20px;
+  font-size: 2em;
+  font-weight: bold;
+}
+
+.dashboard-content {
+  display: flex;
+  flex-direction: column; 
+  gap: 20px;
+}
+
+.insights-section {
+  width: 100%; 
+}
+
+.ai-insights {
+  background-color: #e6f2ff;
+  border-radius: 8px;
+  padding: 15px 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px; 
+}
+
+.ai-insights h3 {
+  color: #1a5f7a;
+  margin-bottom: 10px;
+  font-size: 1.1em;
+}
+
+.ai-insights ul {
+  list-style-type: disc;
+  padding-left: 20px;
+  color: #2c3e50;
+  font-size: 0.9em;
+}
+
+.main-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.chart-section {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.chart-header h2 {
+  margin: 0;
+  font-size: 1.2em;
+  color: #333;
+}
+
+.chart-controls label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.chart-controls select {
+  padding: 5px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.chart-container {
+  width: 100%;
+  height: 300px;
+}
+
+.metrics-selector {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+.metrics-selector h2 {
+  margin-bottom: 15px;
+  color: #333;
+  font-size: 1.2em;
+}
+
+.metrics-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.metric-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.metric-checkbox input {
+  margin: 0;
+}
+
+@media screen and (max-width: 768px) {
+  .progress-dashboard-container {
+    margin-left: 0;
+    padding-top: 60px; 
   }
-  
+
+  .dashboard-content {
+    flex-direction: column;
+  }
+
+  .insights-section {
+    width: 100%;
+  }
+
   .metrics-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    flex-direction: column;
+  }
+
+  .chart-header {
+    flex-direction: column;
+    align-items: flex-start;
     gap: 10px;
   }
-  
-  .metric-checkbox {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    cursor: pointer;
-  }
-  
-  .metric-checkbox input {
-    margin: 0;
-  }
-  
-  /* Responsive Design */
-  @media screen and (max-width: 768px) {
-    .metrics-grid {
-      grid-template-columns: 1fr;
-    }
-  
-    .chart-header {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 10px;
-    }
-  }
+} */

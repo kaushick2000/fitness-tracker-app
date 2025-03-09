@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import exercises from "../data/exercises_with_youtube.json";
 import './ui/ActivityLogging.css';
+import Nav from'../components/Nav';
 
 const initialExerciseData = {
   "exercises_by_body_part": {
@@ -403,288 +404,293 @@ const ActivityLogging = () => {
   const recommendedExercises = getRecommendedExercises();
 
   return (
-    <div className="fitness-tracker">
-      <div className="header">
-        <h1>Fitness Tracker</h1>
-        <div className="user-profile-summary">
-          <span>{userProfile.name}</span>
-          <button className="profile-button" onClick={() => alert("Profile settings would open here")}>
-            Profile
-          </button>
-        </div>
+    <div className="app-container">
+      <div className="nav-wrapper">
+        <Nav/>
       </div>
-      
-      <div className="date-selector">
-        <label htmlFor="date-input">Log activities for: </label>
-        <input
-          id="date-input"
-          type="date"
-          value={selectedDate}
-          onChange={handleDateChange}
-          max={new Date().toISOString().split('T')[0]}
-          className="date-input"
-        />
-        <div className="view-toggle">
-          <button 
-            className={`toggle-button ${!viewHistory ? 'active' : ''}`} 
-            onClick={() => setViewHistory(false)}
-          >
-            Plan
-          </button>
-          <button 
-            className={`toggle-button ${viewHistory ? 'active' : ''}`} 
-            onClick={() => setViewHistory(true)}
-          >
-            History
-          </button>
+      <div className="fitness-tracker">
+        <div className="header">
+          <h1>Fitness Tracker</h1>
+          <div className="user-profile-summary">
+            <span>{userProfile.name}</span>
+            <button className="profile-button" onClick={() => alert("Profile settings would open here")}>
+              Profile
+            </button>
+          </div>
         </div>
-      </div>
-      
-      {!viewHistory ? (
-        <>
-          <div className="metrics-tracking">
-            <div className="metrics-card">
-              <h3>Daily Activity</h3>
-              <div className="metrics-grid">
-                <div className="metric">
-                  <div className="metric-value">{stepsCount}</div>
-                  <div className="metric-label">Steps</div>
+        
+        <div className="date-selector">
+          <label htmlFor="date-input">Log activities for: </label>
+          <input
+            id="date-input"
+            type="date"
+            value={selectedDate}
+            onChange={handleDateChange}
+            max={new Date().toISOString().split('T')[0]}
+            className="date-input"
+          />
+          <div className="view-toggle">
+            <button 
+              className={`toggle-button ${!viewHistory ? 'active' : ''}`} 
+              onClick={() => setViewHistory(false)}
+            >
+              Plan
+            </button>
+            <button 
+              className={`toggle-button ${viewHistory ? 'active' : ''}`} 
+              onClick={() => setViewHistory(true)}
+            >
+              History
+            </button>
+          </div>
+        </div>
+        
+        {!viewHistory ? (
+          <>
+            <div className="metrics-tracking">
+              <div className="metrics-card">
+                <h3>Daily Activity</h3>
+                <div className="metrics-grid">
+                  <div className="metric">
+                    <div className="metric-value">{stepsCount}</div>
+                    <div className="metric-label">Steps</div>
+                  </div>
+                  <div className="metric">
+                    <div className="metric-value">{activeMinutes}</div>
+                    <div className="metric-label">Active Minutes</div>
+                  </div>
+                  <div className="metric">
+                    <div className="metric-value">{caloriesBurned + workoutPlan.reduce((sum, ex) => sum + ex.calories, 0)}</div>
+                    <div className="metric-label">Calories</div>
+                  </div>
                 </div>
-                <div className="metric">
-                  <div className="metric-value">{activeMinutes}</div>
-                  <div className="metric-label">Active Minutes</div>
-                </div>
-                <div className="metric">
-                  <div className="metric-value">{caloriesBurned + workoutPlan.reduce((sum, ex) => sum + ex.calories, 0)}</div>
-                  <div className="metric-label">Calories</div>
-                </div>
-              </div>
-              
-              <div className="metrics-forms">
-                <form onSubmit={handleAddSteps} className="metric-form">
-                  <input type="number" name="steps" placeholder="Add steps" min="0" className="metric-input" />
-                  <button type="submit" className="metric-button">Add</button>
-                </form>
                 
-                <form onSubmit={handleAddActiveMinutes} className="metric-form">
-                  <input type="number" name="minutes" placeholder="Add active minutes" min="0" className="metric-input" />
-                  <button type="submit" className="metric-button">Add</button>
-                </form>
+                <div className="metrics-forms">
+                  <form onSubmit={handleAddSteps} className="metric-form">
+                    <input type="number" name="steps" placeholder="Add steps" min="0" className="metric-input" />
+                    <button type="submit" className="metric-button">Add</button>
+                  </form>
+                  
+                  <form onSubmit={handleAddActiveMinutes} className="metric-form">
+                    <input type="number" name="minutes" placeholder="Add active minutes" min="0" className="metric-input" />
+                    <button type="submit" className="metric-button">Add</button>
+                  </form>
+                </div>
               </div>
             </div>
-          </div>
-          
-          <div className="ai-recommendations">
-            <button 
-              className="recommendations-toggle" 
-              onClick={() => setShowRecommendations(!showRecommendations)}
-            >
-              {showRecommendations ? 'Hide Recommendations' : 'Show AI Recommendations'}
-            </button>
             
-            {showRecommendations && (
-              <div className="recommendations-container">
-                <h3>Recommended for You</h3>
-                <div className="recommendations-grid">
-                  {recommendedExercises.map(exercise => (
-                    <div key={`rec-${exercise.title}`} className="recommendation-card">
-                      <div className="recommendation-title">{exercise.title}</div>
-                      <div className="recommendation-bodypart">{exercise.bodyPart}</div>
-                      <div className="recommendation-details">
-                        {exercise.type} • {exercise.level}
+            <div className="ai-recommendations">
+              <button 
+                className="recommendations-toggle" 
+                onClick={() => setShowRecommendations(!showRecommendations)}
+              >
+                {showRecommendations ? 'Hide Recommendations' : 'Show AI Recommendations'}
+              </button>
+              
+              {showRecommendations && (
+                <div className="recommendations-container">
+                  <h3>Recommended for You</h3>
+                  <div className="recommendations-grid">
+                    {recommendedExercises.map(exercise => (
+                      <div key={`rec-${exercise.title}`} className="recommendation-card">
+                        <div className="recommendation-title">{exercise.title}</div>
+                        <div className="recommendation-bodypart">{exercise.bodyPart}</div>
+                        <div className="recommendation-details">
+                          {exercise.type} • {exercise.level}
+                        </div>
+                        <button 
+                          onClick={() => handleAddExercise(exercise, exercise.bodyPart)} 
+                          className="recommendation-add-button"
+                        >
+                          Add to Workout
+                        </button>
                       </div>
-                      <button 
-                        onClick={() => handleAddExercise(exercise, exercise.bodyPart)} 
-                        className="recommendation-add-button"
-                      >
-                        Add to Workout
-                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+            
+            <div className="search-controls">
+              <input
+                type="text"
+                placeholder="Search exercises..."
+                className="search-input"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              
+              <select
+                value={selectedBodyPart}
+                onChange={(e) => setSelectedBodyPart(e.target.value)}
+                className="body-part-select"
+              >
+                <option value="">All Body Parts</option>
+                {bodyParts.map(bodyPart => (
+                  <option key={bodyPart} value={bodyPart}>{bodyPart}</option>
+                ))}
+              </select>
+            </div>
+            
+            <div className="exercise-list-container">
+              <div className="exercise-header">
+                <div>Exercise</div>
+                <div>Type</div>
+                <div>Level</div>
+                <div>Action</div>
+              </div>
+              
+              {Object.entries(filteredExercises()).map(([bodyPart, exercises]) => (
+                <div key={bodyPart} className="body-part-section">
+                  <div className="body-part-title">
+                    {bodyPart}
+                  </div>
+                  
+                  {exercises.map(exercise => (
+                    <div key={exercise.title} className="exercise-item">
+                      <div>
+                        <div className="exercise-title">{exercise.title}</div>
+                        <div className="exercise-description">{exercise.description}</div>
+                        {exercise.youtube_video && (
+                          <a 
+                            href={exercise.youtube_video} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="exercise-video-link"
+                          >
+                            Watch Video
+                          </a>
+                        )}
+                        <div className="exercise-metadata">
+                          <span>Equipment: {exercise.equipment}</span>
+                          {exercise.rating > 0 && (
+                            <div className="exercise-rating">
+                              <span className="star-icon">★</span>
+                              <span>{exercise.rating.toFixed(1)}</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      <div className="exercise-details">{exercise.type}</div>
+                      <div className="exercise-details">{exercise.level}</div>
+                      <div className="exercise-details">
+                        <button 
+                          onClick={() => handleAddExercise(exercise, bodyPart)} 
+                          className="add-button"
+                        >
+                          {editingExercise ? 'Update' : '+'}
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>
+              ))}
+            </div>
+          </>
+        ) : (
+          <div className="workout-history">
+            <h2>Workout History</h2>
+            {Object.keys(workoutHistory).length === 0 ? (
+              <div className="history-empty">No workout history found</div>
+            ) : (
+              <div className="history-list">
+                {Object.entries(workoutHistory)
+                  .sort((a, b) => new Date(b[0]) - new Date(a[0]))
+                  .map(([date, exercises]) => (
+                    <div key={date} className="history-item">
+                      <div className="history-date">
+                        {new Date(date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                      </div>
+                      <div className="history-exercises">
+                        {exercises.map((exercise, idx) => (
+                          <div key={idx} className="history-exercise">
+                            <div className="history-exercise-title">{exercise.title}</div>
+                            <div className="history-exercise-details">
+                              {exercise.bodyPart} • {exercise.duration} mins • {exercise.calories} cal • {exercise.reps} reps
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="history-summary">
+                        <span>Total Time: {exercises.reduce((sum, ex) => sum + ex.duration, 0)} mins</span>
+                        <span>Total Calories: {exercises.reduce((sum, ex) => sum + ex.calories, 0)} cal</span>
+                        <span>Exercises: {exercises.length}</span>
+                      </div>
+                    </div>
+                  ))}
               </div>
             )}
           </div>
-          
-          <div className="search-controls">
-            <input
-              type="text"
-              placeholder="Search exercises..."
-              className="search-input"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
+        )}
+
+        {!viewHistory && workoutPlan.length > 0 && (
+          <div className="workout-plan">
+            <h2>Workout Plan</h2>
             
-            <select
-              value={selectedBodyPart}
-              onChange={(e) => setSelectedBodyPart(e.target.value)}
-              className="body-part-select"
-            >
-              <option value="">All Body Parts</option>
-              {bodyParts.map(bodyPart => (
-                <option key={bodyPart} value={bodyPart}>{bodyPart}</option>
-              ))}
-            </select>
-          </div>
-          
-          <div className="exercise-list-container">
-            <div className="exercise-header">
-              <div>Exercise</div>
-              <div>Type</div>
-              <div>Level</div>
-              <div>Action</div>
-            </div>
-            
-            {Object.entries(filteredExercises()).map(([bodyPart, exercises]) => (
-              <div key={bodyPart} className="body-part-section">
-                <div className="body-part-title">
-                  {bodyPart}
-                </div>
-                
-                {exercises.map(exercise => (
-                  <div key={exercise.title} className="exercise-item">
-                    <div>
-                      <div className="exercise-title">{exercise.title}</div>
-                      <div className="exercise-description">{exercise.description}</div>
-                      {exercise.youtube_video && (
-                        <a 
-                          href={exercise.youtube_video} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="exercise-video-link"
-                        >
-                          Watch Video
-                        </a>
-                      )}
-                      <div className="exercise-metadata">
-                        <span>Equipment: {exercise.equipment}</span>
-                        {exercise.rating > 0 && (
-                          <div className="exercise-rating">
-                            <span className="star-icon">★</span>
-                            <span>{exercise.rating.toFixed(1)}</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                    <div className="exercise-details">{exercise.type}</div>
-                    <div className="exercise-details">{exercise.level}</div>
-                    <div className="exercise-details">
-                      <button 
-                        onClick={() => handleAddExercise(exercise, bodyPart)} 
-                        className="add-button"
-                      >
-                        {editingExercise ? 'Update' : '+'}
-                      </button>
-                    </div>
+            {workoutPlan.map(exercise => (
+              <div key={exercise.id} className="workout-exercise">
+                <div className="workout-exercise-info">
+                  <div className="workout-exercise-title">{exercise.title}</div>
+                  <div className="workout-exercise-details">
+                    {exercise.bodyPart} • {exercise.duration} mins • {exercise.calories} cal • {exercise.reps} reps
                   </div>
-                ))}
+                </div>
+                <div className="workout-exercise-actions">
+                  <button 
+                    onClick={() => handleEditExercise(exercise)} 
+                    className="edit-button"
+                  >
+                    Edit
+                  </button>
+                  <button 
+                    onClick={() => handleRemoveExercise(exercise.id)} 
+                    className="remove-button"
+                  >
+                    ×
+                  </button>
+                </div>
               </div>
             ))}
-          </div>
-        </>
-      ) : (
-        <div className="workout-history">
-          <h2>Workout History</h2>
-          {Object.keys(workoutHistory).length === 0 ? (
-            <div className="history-empty">No workout history found</div>
-          ) : (
-            <div className="history-list">
-              {Object.entries(workoutHistory)
-                .sort((a, b) => new Date(b[0]) - new Date(a[0]))
-                .map(([date, exercises]) => (
-                  <div key={date} className="history-item">
-                    <div className="history-date">
-                      {new Date(date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
-                    </div>
-                    <div className="history-exercises">
-                      {exercises.map((exercise, idx) => (
-                        <div key={idx} className="history-exercise">
-                          <div className="history-exercise-title">{exercise.title}</div>
-                          <div className="history-exercise-details">
-                            {exercise.bodyPart} • {exercise.duration} mins • {exercise.calories} cal • {exercise.reps} reps
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                    <div className="history-summary">
-                      <span>Total Time: {exercises.reduce((sum, ex) => sum + ex.duration, 0)} mins</span>
-                      <span>Total Calories: {exercises.reduce((sum, ex) => sum + ex.calories, 0)} cal</span>
-                      <span>Exercises: {exercises.length}</span>
-                    </div>
-                  </div>
-                ))}
-            </div>
-          )}
-        </div>
-      )}
-
-      {!viewHistory && workoutPlan.length > 0 && (
-        <div className="workout-plan">
-          <h2>Workout Plan</h2>
-          
-          {workoutPlan.map(exercise => (
-            <div key={exercise.id} className="workout-exercise">
-              <div className="workout-exercise-info">
-                <div className="workout-exercise-title">{exercise.title}</div>
-                <div className="workout-exercise-details">
-                  {exercise.bodyPart} • {exercise.duration} mins • {exercise.calories} cal • {exercise.reps} reps
-                </div>
+            
+            <div className="workout-summary">
+              <div className="summary-item">
+                <div className="summary-label">Total Time</div>
+                <div className="summary-value">{workoutPlan.reduce((sum, ex) => sum + ex.duration, 0)} mins</div>
               </div>
-              <div className="workout-exercise-actions">
-                <button 
-                  onClick={() => handleEditExercise(exercise)} 
-                  className="edit-button"
-                >
-                  Edit
-                </button>
-                <button 
-                  onClick={() => handleRemoveExercise(exercise.id)} 
-                  className="remove-button"
-                >
-                  ×
-                </button>
+              <div className="summary-item">
+                <div className="summary-label">Total Calories</div>
+                <div className="summary-value">{workoutPlan.reduce((sum, ex) => sum + ex.calories, 0)} cal</div>
+              </div>
+              <div className="summary-item">
+                <div className="summary-label">Exercises</div>
+                <div className="summary-value">{workoutPlan.length}</div>
               </div>
             </div>
-          ))}
-          
-          <div className="workout-summary">
-            <div className="summary-item">
-              <div className="summary-label">Total Time</div>
-              <div className="summary-value">{workoutPlan.reduce((sum, ex) => sum + ex.duration, 0)} mins</div>
-            </div>
-            <div className="summary-item">
-              <div className="summary-label">Total Calories</div>
-              <div className="summary-value">{workoutPlan.reduce((sum, ex) => sum + ex.calories, 0)} cal</div>
-            </div>
-            <div className="summary-item">
-              <div className="summary-label">Exercises</div>
-              <div className="summary-value">{workoutPlan.length}</div>
+            
+            <div className="workout-actions">
+              <button onClick={handleSaveWorkout} className="save-button">
+                Save Workout
+              </button>
             </div>
           </div>
-          
-          <div className="workout-actions">
-            <button onClick={handleSaveWorkout} className="save-button">
-              Save Workout
+        )}
+        
+        <div className="data-sync-controls">
+          <h3>Data Synchronization</h3>
+          <div className="sync-buttons">
+            <button onClick={handleExportData} className="export-button">
+              Export Data
             </button>
+            <label className="import-button">
+              Import Data
+              <input
+                type="file"
+                accept=".json"
+                onChange={handleImportData}
+                style={{ display: 'none' }}
+              />
+            </label>
           </div>
-        </div>
-      )}
-      
-      <div className="data-sync-controls">
-        <h3>Data Synchronization</h3>
-        <div className="sync-buttons">
-          <button onClick={handleExportData} className="export-button">
-            Export Data
-          </button>
-          <label className="import-button">
-            Import Data
-            <input
-              type="file"
-              accept=".json"
-              onChange={handleImportData}
-              style={{ display: 'none' }}
-            />
-          </label>
         </div>
       </div>
     </div>

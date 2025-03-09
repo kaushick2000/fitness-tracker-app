@@ -300,7 +300,15 @@ const SignupForm = () => {
         >
           Check Verification Status
         </button>
-      )} */}
+      )} */} 
+      {/* Add Sign Up button/link at the bottom with responsive styling */}
+      <button 
+        onClick={() => navigate('/login')} 
+        className="secondary-button"
+        style={{ marginTop: '1rem' }} /* Use rem for scalability */
+      >
+        Aldready signed up? Click here to login up
+      </button>
     </div>
   );
 };
