@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import exercises from "../data/exercises_with_youtube.json";
-import './ui/ActivityLogging.css';
+import '../styles/ActivityLogging.css';
 import Nav from'../components/Nav';
 
 const initialExerciseData = {

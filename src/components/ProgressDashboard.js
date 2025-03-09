@@ -102,7 +102,7 @@ const ProgressDashboard = () => {
             {renderAIInsights()}
           </div>
           
-          <div className="main-content">
+          <div className="main-content2">
             <div className="chart-section" style={{ textAlign: 'right' }}>
               <div className="chart-header">
                 <h2>Progress Metrics</h2>

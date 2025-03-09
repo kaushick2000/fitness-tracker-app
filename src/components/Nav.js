@@ -11,6 +11,7 @@ const Nav = () => {
     if (path.includes('dashboard')) return 'dashboard';
     if (path.includes('activitylogging')) return 'activity';
     if (path.includes('progress')) return 'progress';
+    if (path.includes('analytics')) return 'analytics';
     if (path.includes('profile')) return 'profile';
     return 'dashboard'; // Default
   });
@@ -22,6 +23,7 @@ const Nav = () => {
     else if (path.includes('dashboard')) setActiveNavItem('dashboard');
     else if (path.includes('activitylogging')) setActiveNavItem('activity');
     else if (path.includes('progress')) setActiveNavItem('progress');
+    else if (path.includes('analytics')) setActiveNavItem('analytics');
     else if (path.includes('profile')) setActiveNavItem('profile');
     else setActiveNavItem('dashboard');
   }, [location.pathname]);
@@ -46,6 +48,9 @@ const Nav = () => {
       case 'profile':
         navigate('/profile');
         break;
+      case 'analytics':
+        navigate('/analytics');
+        break;
       default:
         navigate('/dashboard');
     }
@@ -57,13 +62,6 @@ const Nav = () => {
         <h2>FITNESS TRACKER</h2>
       </div>
       <div className="nav-items">
-        <div 
-          className={`nav-item ${activeNavItem === 'home' ? 'active' : ''}`}
-          onClick={() => handleNavigation('home')}
-        >
-          <div className="nav-icon">🏠</div>
-          <span>Home</span>
-        </div>
         <div 
           className={`nav-item ${activeNavItem === 'dashboard' ? 'active' : ''}`}
           onClick={() => handleNavigation('dashboard')}
@@ -82,8 +80,15 @@ const Nav = () => {
           className={`nav-item ${activeNavItem === 'progress' ? 'active' : ''}`}
           onClick={() => handleNavigation('progress')}
         >
-          <div className="nav-icon">📈</div> {/* Changed icon for clarity */}
+          <div className="nav-icon">📈</div> 
           <span>Progress</span>
+        </div>
+        <div 
+          className={`nav-item ${activeNavItem === 'analytics' ? 'active' : ''}`}
+          onClick={() => handleNavigation('analytics')}
+        >
+          <div className="nav-icon">🔎</div>
+          <span>Analytics</span>
         </div>
         <div 
           className={`nav-item ${activeNavItem === 'profile' ? 'active' : ''}`}

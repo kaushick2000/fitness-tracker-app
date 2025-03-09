@@ -13,6 +13,8 @@ import './styles/dashboard.css'; // Import dashboard CSS
 import './styles/homepage.css'; // Import homepage CSS
 import ProgressDashboard from './components/ProgressDashboard';
 import './styles/progressdashboard.css';
+import AnalyticsDashboard from './components/AnalyticsDashboard';
+import Profile from './components/Profile';
 
 function App() {
   return (
@@ -25,7 +27,9 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/progress" element={<ProgressDashboard/>} />
           <Route path="/activitylogging" element={<ActivityLogging/>} />
+          <Route path="/analytics" element={<AnalyticsDashboard/>} />
           <Route path="/home" element={<HomePage />} />
+          <Route path="/profile" element={<Profile />} />
           {/* Default route redirects to home page instead of login */}
           <Route path="/" element={<Navigate to="/home" replace />} />
         </Routes>
