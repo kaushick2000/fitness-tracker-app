@@ -19,6 +19,7 @@ import SubscriptionPayment from './components/SubscriptionPayment';
 // import PaymentSuccess from './components/PaymentSuccess';
 import ContactUs from './components/ContactUs';
 import Trainer from './components/Trainer';
+import Nutrition from './components/Nutrition';
 function App() {
   return (
     <Router>
@@ -37,6 +38,7 @@ function App() {
           <Route path="/plans" element={<SubscriptionPayment/>} /> 
           <Route path='/contact' element={<ContactUs/>}/>
           <Route path='/trainer' element={<Trainer/>}/>
+          <Route path='/nutrition' element={<Nutrition/>}/>
           
           {/* <Route path="/payment" element={<Payment />} />
           <Route path="/payment-success" element={<PaymentSuccess />} /> */}
