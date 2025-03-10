@@ -18,7 +18,7 @@ import Profile from './components/Profile';
 import SubscriptionPayment from './components/SubscriptionPayment';
 // import PaymentSuccess from './components/PaymentSuccess';
 import ContactUs from './components/ContacUs';
-
+import Trainer from './components/Trainer';
 function App() {
   return (
     <Router>
@@ -36,6 +36,8 @@ function App() {
           <Route path="/home" element={<HomePage />} /> 
           <Route path="/plans" element={<SubscriptionPayment/>} /> 
           <Route path='/contact' element={<ContactUs/>}/>
+          <Route path='/trainer' element={<Trainer/>}/>
+          
           {/* <Route path="/payment" element={<Payment />} />
           <Route path="/payment-success" element={<PaymentSuccess />} /> */}
           {/* Default route redirects to home page instead of login */}
