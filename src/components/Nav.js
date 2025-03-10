@@ -12,7 +12,9 @@ const Nav = () => {
     if (path.includes('activitylogging')) return 'activity';
     if (path.includes('progress')) return 'progress';
     if (path.includes('analytics')) return 'analytics';
+    if (path.includes('plans')) return 'plans';
     if (path.includes('profile')) return 'profile';
+    if (path.includes('contact')) return 'contact';
     return 'dashboard'; // Default
   });
 
@@ -24,7 +26,9 @@ const Nav = () => {
     else if (path.includes('activitylogging')) setActiveNavItem('activity');
     else if (path.includes('progress')) setActiveNavItem('progress');
     else if (path.includes('analytics')) setActiveNavItem('analytics');
+    else if (path.includes('plans')) setActiveNavItem('plans');
     else if (path.includes('profile')) setActiveNavItem('profile');
+    else if (path.includes('contact')) setActiveNavItem('contact');
     else setActiveNavItem('dashboard');
   }, [location.pathname]);
 
@@ -45,11 +49,17 @@ const Nav = () => {
       case 'progress':
         navigate('/progress');
         break;
+      case 'plans':
+          navigate('/plans');
+          break;
       case 'profile':
         navigate('/profile');
         break;
       case 'analytics':
         navigate('/analytics');
+        break;
+      case 'contact':
+        navigate('/contact');
         break;
       default:
         navigate('/dashboard');
@@ -82,6 +92,14 @@ const Nav = () => {
         >
           <div className="nav-icon">📈</div> 
           <span>Progress</span>
+
+        </div>
+        <div 
+          className={`nav-item ${activeNavItem === 'plans' ? 'active' : ''}`}
+          onClick={() => handleNavigation('plans')}
+        >
+          <div className="nav-icon">💰</div> {/* Changed icon for clarity */}
+          <span>plans</span>
         </div>
         <div 
           className={`nav-item ${activeNavItem === 'analytics' ? 'active' : ''}`}
@@ -96,6 +114,13 @@ const Nav = () => {
         >
           <div className="nav-icon">👤</div>
           <span>Profile</span>
+        </div>
+        <div 
+          className={`nav-item ${activeNavItem === 'contact' ? 'active' : ''}`}
+          onClick={() => handleNavigation('contact')}
+        >
+          <div className="nav-icon">📞</div>
+          <span>Contact Us</span>
         </div>
       </div>
     </div>

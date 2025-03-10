@@ -15,6 +15,9 @@ import ProgressDashboard from './components/ProgressDashboard';
 import './styles/progressdashboard.css';
 import AnalyticsDashboard from './components/AnalyticsDashboard';
 import Profile from './components/Profile';
+import SubscriptionPayment from './components/SubscriptionPayment';
+// import PaymentSuccess from './components/PaymentSuccess';
+import ContactUs from './components/ContacUs';
 
 function App() {
   return (
@@ -30,6 +33,11 @@ function App() {
           <Route path="/analytics" element={<AnalyticsDashboard/>} />
           <Route path="/home" element={<HomePage />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/home" element={<HomePage />} /> 
+          <Route path="/plans" element={<SubscriptionPayment/>} /> 
+          <Route path='/contact' element={<ContactUs/>}/>
+          {/* <Route path="/payment" element={<Payment />} />
+          <Route path="/payment-success" element={<PaymentSuccess />} /> */}
           {/* Default route redirects to home page instead of login */}
           <Route path="/" element={<Navigate to="/home" replace />} />
         </Routes>
