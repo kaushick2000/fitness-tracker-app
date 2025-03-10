@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import Nav from "./Nav";
 import "../styles/Profile.css";
+import ProfilePic from '../assets/profilepic.jpg';
 const Profile = () => {
   const defaultUser = {
     personalInfo: {
@@ -176,7 +177,7 @@ const Profile = () => {
           <div className="profile-header">
             <div className="profile-image-container">
               <img
-                src={personalInfo.profileImage}
+                src={ProfilePic}
                 alt="Profile"
                 className="profile-image"
               />
@@ -189,10 +190,7 @@ const Profile = () => {
                 {personalInfo.firstName} {personalInfo.lastName}
               </h1>
               <p className="username">@{accountInfo.username}</p>
-              <p className="member-since">
-                Member since{" "}
-                {new Date(accountInfo.memberSince).toLocaleDateString()}
-              </p>
+             
             </div>
             <div className="profile-actions">
               {!editMode ? (
