@@ -17,7 +17,7 @@ import AnalyticsDashboard from './components/AnalyticsDashboard';
 import Profile from './components/Profile';
 import SubscriptionPayment from './components/SubscriptionPayment';
 // import PaymentSuccess from './components/PaymentSuccess';
-import ContactUs from './components/ContacUs';
+import ContactUs from './components/ContactUs';
 import Trainer from './components/Trainer';
 function App() {
   return (

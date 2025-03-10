@@ -24,6 +24,11 @@ const AnalyticsDashboard = ({ userData }) => {
   const [timeFrame, setTimeFrame] = useState("weekly");
   const [selectedMetric, setSelectedMetric] = useState("calories");
   const [bodyPartFilter, setBodyPartFilter] = useState("All");
+  const [purchasedPlans, setPurchasedPlans] = useState(() => {
+      const savedPlans = localStorage.getItem('purchasedPlans');
+      return savedPlans ? JSON.parse(savedPlans) : [];
+    });
+    
 
   // Example user data structure (would be passed as props in real app)
   const userDataExample = userData || {
@@ -204,7 +209,7 @@ const AnalyticsDashboard = ({ userData }) => {
   return (
     <div className="app-container">
       <div className="nav-wrapper">
-        <Nav />
+        <Nav purchasedPlans={purchasedPlans}/>
       </div>
       <div className="analytics-dashboard">
         <h1>Analytics Dashboard</h1>

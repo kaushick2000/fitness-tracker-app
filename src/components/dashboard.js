@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import homepageimg2 from "../assets/homepageimg2.jpg";
 import Nav from "../components/Nav";
 import {
@@ -113,7 +113,6 @@ const FitnessDashboard = () => {
 
   const renderTopMetrics = () => {
     const latestData = mockProgressData[mockProgressData.length - 1];
-
     return (
       <div className="top-metrics">
         {/* <div className="visualization-image">
@@ -193,6 +192,7 @@ const FitnessDashboard = () => {
   };
 
   const renderProgressDonut = () => {
+    
     return (
       <div className="progress-section">
         <div className="section-header">
@@ -244,11 +244,18 @@ const FitnessDashboard = () => {
       </div>
     );
   };
-
+  const [purchasedPlans, setPurchasedPlans] = useState(() => {
+    const savedPlans = localStorage.getItem('purchasedPlans');
+    return savedPlans ? JSON.parse(savedPlans) : [];
+  });
+  
+  useEffect(() => {
+    localStorage.setItem('purchasedPlans', JSON.stringify(purchasedPlans));
+  }, [purchasedPlans]);
   return (
     <div className="app-container">
       {/* Move Nav component outside the dashboard content */}
-      <Nav />
+      <Nav purchasedPlans={purchasedPlans}/>
       <div className="dashboard-container dashboard-wrapper-new">
         <div className="dashboard-header">
           <div className="greeting-section">

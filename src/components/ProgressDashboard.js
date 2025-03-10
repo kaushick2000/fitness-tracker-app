@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../styles/progressdashboard.css';
 import Nav from '../components/Nav';
 import { 
@@ -30,7 +30,13 @@ const ProgressDashboard = () => {
   });
 
   const [chartType, setChartType] = useState('line');
-
+  const [purchasedPlans, setPurchasedPlans] = useState(() => {
+    const savedPlans = localStorage.getItem('purchasedPlans');
+    return savedPlans ? JSON.parse(savedPlans) : [];
+  });
+  useEffect(() => {
+    localStorage.setItem('purchasedPlans', JSON.stringify(purchasedPlans));
+  }, [purchasedPlans]);
   const toggleMetric = (metric) => {
     setSelectedMetrics(prev => ({
       ...prev,
@@ -93,7 +99,7 @@ const ProgressDashboard = () => {
 
   return (
     <div className="app-container">
-      <Nav />
+      <Nav purchasedPlans={purchasedPlans} />
       <div className="progress-dashboard-container">
         <h1 className="dashboard-title">Fitness Progress Dashboard</h1>
         

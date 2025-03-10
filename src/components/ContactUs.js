@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../styles/contactus.css';
 import Nav from './Nav';
 
@@ -12,7 +12,14 @@ const ContactUs = () => {
   });
 
   const [submitted, setSubmitted] = useState(false);
-
+  const [purchasedPlans, setPurchasedPlans] = useState(() => {
+    const savedPlans = localStorage.getItem('purchasedPlans');
+    return savedPlans ? JSON.parse(savedPlans) : [];
+  });
+  
+  useEffect(() => {
+    localStorage.setItem('purchasedPlans', JSON.stringify(purchasedPlans));
+  }, [purchasedPlans]);
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prevState => ({
@@ -37,7 +44,7 @@ const ContactUs = () => {
 
   return (
     <div className="page-wrapper">
-      <Nav />
+      <Nav purchasedPlans={purchasedPlans}/>
       <div className="contact-page">
         <h1>Contact Us</h1>
         

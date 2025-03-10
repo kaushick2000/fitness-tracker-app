@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import Nav from "./Nav";
 import "../styles/Profile.css";
 import ProfilePic from '../assets/profilepic.jpg';
@@ -58,7 +58,14 @@ const Profile = () => {
   const [personalInfo, setPersonalInfo] = useState(user.personalInfo);
   const [fitnessInfo, setFitnessInfo] = useState(user.fitnessInfo);
   const [accountInfo, setAccountInfo] = useState(user.accountInfo);
-
+  const [purchasedPlans, setPurchasedPlans] = useState(() => {
+    const savedPlans = localStorage.getItem('purchasedPlans');
+    return savedPlans ? JSON.parse(savedPlans) : [];
+  });
+  
+  useEffect(() => {
+    localStorage.setItem('purchasedPlans', JSON.stringify(purchasedPlans));
+  }, [purchasedPlans]);
   // Function to handle input changes for personal info
   const handlePersonalInfoChange = (e) => {
     const { name, value } = e.target;
@@ -171,7 +178,7 @@ const Profile = () => {
     <>
       <div className="app-container">
         <div className="nav-wrapper">
-          <Nav />
+          <Nav purchasedPlans={purchasedPlans} />
         </div>
         <div className="profile-page">
           <div className="profile-header">

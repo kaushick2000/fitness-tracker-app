@@ -11,7 +11,6 @@
   font-family: Arial, sans-serif;
   background-color: #f5f5f5;
   max-height: 100vh; /* Ensure it fits within viewport height */
-  overflow: hidden; /* Prevent scrolling */
 }
 
 .dashboard-title {
@@ -102,38 +101,42 @@
   height: 300px; /* Increased height for larger chart */
   margin-left: auto; /* Center and shift right */
 }
-
 .metrics-selector {
   background-color: #fff;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Reduced shadow */
-  padding: 10px; /* Reduced padding */
-  max-height: 150px; /* Limit height to fit content */
-  overflow: auto; /* Allow internal scrolling if needed */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+  max-height: 200px; /* Increased to fit all metrics comfortably */
+  overflow: auto;
 }
 
 .metrics-selector h2 {
-  margin-bottom: 5px; /* Reduced margin */
+  margin-bottom: 15px;
   color: #333;
-  font-size: 1em; /* Reduced font size */
+  font-size: 1.1em;
+  font-weight: bold;
 }
 
 .metrics-grid {
   display: flex;
   flex-direction: column;
-  gap: 5px; /* Reduced gap */
+  gap: 12px; /* Increased for better spacing between options */
 }
 
 .metric-checkbox {
   display: flex;
   align-items: center;
-  gap: 5px; /* Reduced gap */
+  justify-content: space-between; /* This will push labels left and checkboxes right */
+  gap: 10px;
   cursor: pointer;
-  font-size: 0.9em; /* Reduced font size */
+  font-size: 0.95em;
+  padding: 5px 10px; /* Add some padding for better clickable area */
 }
 
 .metric-checkbox input {
   margin: 0;
+  height: 16px;
+  width: 16px; /* Make checkboxes slightly larger for better visibility */
 }
 
 /* Responsive Design */
