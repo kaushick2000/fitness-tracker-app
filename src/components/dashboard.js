@@ -1,76 +1,119 @@
-import React, { useState } from 'react'; 
-import homepageimg2 from '../assets/homepageimg2.jpg'; 
-import Nav from '../components/Nav';
-import { 
-  BarChart, 
-  Bar, 
+import React, { useState } from "react";
+import homepageimg2 from "../assets/homepageimg2.jpg";
+import Nav from "../components/Nav";
+import {
+  BarChart,
+  Bar,
   LineChart,
   Line,
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  Legend, 
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
   ResponsiveContainer,
   PieChart,
   Pie,
-  Cell
-} from 'recharts';
+  Cell,
+} from "recharts";
 
 const mockProgressData = [
-  { month: 'Jan', weight: 180, steps: 5000, calories: 2200, workoutDuration: 45 },
-  { month: 'Feb', weight: 175, steps: 6000, calories: 2100, workoutDuration: 60 },
-  { month: 'Mar', weight: 170, steps: 7000, calories: 2000, workoutDuration: 75 },
-  { month: 'Apr', weight: 168, steps: 8000, calories: 1900, workoutDuration: 90 },
-  { month: 'May', weight: 165, steps: 8500, calories: 1850, workoutDuration: 95 },
-  { month: 'Jun', weight: 163, steps: 9000, calories: 1800, workoutDuration: 100 },
-  { month: 'Jul', weight: 160, steps: 9500, calories: 1750, workoutDuration: 105 },
+  {
+    month: "Jan",
+    weight: 180,
+    steps: 5000,
+    calories: 2200,
+    workoutDuration: 45,
+  },
+  {
+    month: "Feb",
+    weight: 175,
+    steps: 6000,
+    calories: 2100,
+    workoutDuration: 60,
+  },
+  {
+    month: "Mar",
+    weight: 170,
+    steps: 7000,
+    calories: 2000,
+    workoutDuration: 75,
+  },
+  {
+    month: "Apr",
+    weight: 168,
+    steps: 8000,
+    calories: 1900,
+    workoutDuration: 90,
+  },
+  {
+    month: "May",
+    weight: 165,
+    steps: 8500,
+    calories: 1850,
+    workoutDuration: 95,
+  },
+  {
+    month: "Jun",
+    weight: 163,
+    steps: 9000,
+    calories: 1800,
+    workoutDuration: 100,
+  },
+  {
+    month: "Jul",
+    weight: 160,
+    steps: 9500,
+    calories: 1750,
+    workoutDuration: 105,
+  },
 ];
 
 const weeklyActivityData = [
-  { day: 'Mon', minutes: 30 },
-  { day: 'Tue', minutes: 45 },
-  { day: 'Wed', minutes: 25 },
-  { day: 'Thu', minutes: 60 },
-  { day: 'Fri', minutes: 90 },
-  { day: 'Sat', minutes: 20 },
-  { day: 'Sun', minutes: 15 },
+  { day: "Mon", minutes: 30 },
+  { day: "Tue", minutes: 45 },
+  { day: "Wed", minutes: 25 },
+  { day: "Thu", minutes: 60 },
+  { day: "Fri", minutes: 90 },
+  { day: "Sat", minutes: 20 },
+  { day: "Sun", minutes: 15 },
 ];
 
 const workoutTypeData = [
-  { name: 'Cardio', value: 30 },
-  { name: 'Stretching', value: 40 },
-  { name: 'Weights', value: 15 },
-  { name: 'Strength', value: 25 },
+  { name: "Cardio", value: 30 },
+  { name: "Stretching", value: 40 },
+  { name: "Weights", value: 15 },
+  { name: "Strength", value: 25 },
 ];
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
 const FitnessDashboard = () => {
   const [selectedMetrics, setSelectedMetrics] = useState({
     weight: true,
     steps: true,
     calories: true,
-    workoutDuration: false
+    workoutDuration: false,
   });
 
-  const [chartType, setChartType] = useState('bar');
+  const [chartType, setChartType] = useState("bar");
 
   const toggleMetric = (metric) => {
-    setSelectedMetrics(prev => ({
+    setSelectedMetrics((prev) => ({
       ...prev,
-      [metric]: !prev[metric]
+      [metric]: !prev[metric],
     }));
   };
 
   const getVisibleMetrics = () => {
-    return Object.keys(selectedMetrics)
-      .filter(metric => selectedMetrics[metric]);
+    return Object.keys(selectedMetrics).filter(
+      (metric) => selectedMetrics[metric]
+    );
   };
 
   const renderTopMetrics = () => {
     const latestData = mockProgressData[mockProgressData.length - 1];
-    
+
     return (
       <div className="top-metrics">
         {/* <div className="visualization-image">
@@ -84,16 +127,18 @@ const FitnessDashboard = () => {
             <div className="metric-progress">11% decrease since start</div>
           </div>
         </div>
-        
+
         <div className="metric-card steps">
           <span className="metric-icon">👣</span>
           <div className="metric-content">
             <h3>Steps</h3>
-            <div className="metric-value">{latestData.steps.toLocaleString()}</div>
+            <div className="metric-value">
+              {latestData.steps.toLocaleString()}
+            </div>
             <div className="metric-progress">50% of your goal</div>
           </div>
         </div>
-        
+
         <div className="metric-card calories">
           <span className="metric-icon">💦</span>
           <div className="metric-content">
@@ -170,7 +215,10 @@ const FitnessDashboard = () => {
                 dataKey="value"
               >
                 {workoutTypeData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
                 ))}
               </Pie>
               <Tooltip />
@@ -183,7 +231,10 @@ const FitnessDashboard = () => {
           <div className="workout-types">
             {workoutTypeData.map((type, index) => (
               <div key={index} className="workout-type">
-                <span className="type-dot" style={{ backgroundColor: COLORS[index] }}></span>
+                <span
+                  className="type-dot"
+                  style={{ backgroundColor: COLORS[index] }}
+                ></span>
                 <span className="type-name">{type.name}</span>
                 <span className="type-value">{type.value} hrs</span>
               </div>
@@ -198,18 +249,18 @@ const FitnessDashboard = () => {
     <div className="app-container">
       {/* Move Nav component outside the dashboard content */}
       <Nav />
-      <div className="dashboard-container">
+      <div className="dashboard-container dashboard-wrapper-new">
         <div className="dashboard-header">
           <div className="greeting-section">
             <h2>Welcome Back ⭐</h2>
           </div>
         </div>
-        
+
         <div className="dashboard-content">
           <div className="main-content">
             <div className="center-content">
               {renderTopMetrics()}
-              
+
               <div className="dashboard-grid">
                 <div className="grid-item activity">
                   {renderActivityChart()}
@@ -220,9 +271,7 @@ const FitnessDashboard = () => {
               </div>
             </div>
 
-            <div className="right-sidebar">
-              {renderMonthlyProgress()}
-            </div>
+            <div className="right-sidebar">{renderMonthlyProgress()}</div>
           </div>
         </div>
       </div>
@@ -232,18 +281,17 @@ const FitnessDashboard = () => {
 
 export default FitnessDashboard;
 
-
 // import React, { useState } from 'react';
-// import { 
-//   BarChart, 
-//   Bar, 
+// import {
+//   BarChart,
+//   Bar,
 //   LineChart,
 //   Line,
-//   XAxis, 
-//   YAxis, 
-//   CartesianGrid, 
-//   Tooltip, 
-//   Legend, 
+//   XAxis,
+//   YAxis,
+//   CartesianGrid,
+//   Tooltip,
+//   Legend,
 //   ResponsiveContainer,
 //   PieChart,
 //   Pie,
@@ -310,7 +358,7 @@ export default FitnessDashboard;
 
 //   const renderTopMetrics = () => {
 //     const latestData = mockProgressData[mockProgressData.length - 1];
-    
+
 //     return (
 //       <div className="top-metrics">
 //         <div className="metric-card steps">
@@ -321,7 +369,7 @@ export default FitnessDashboard;
 //             <div className="metric-progress">50% of your goals</div>
 //           </div>
 //         </div>
-        
+
 //         <div className="metric-card water">
 //           <span className="metric-icon">💧</span>
 //           <div className="metric-content">
@@ -334,7 +382,7 @@ export default FitnessDashboard;
 //             </div>
 //           </div>
 //         </div>
-        
+
 //         <div className="metric-card calories">
 //           <span className="metric-icon">🔥</span>
 //           <div className="metric-content">
@@ -345,7 +393,7 @@ export default FitnessDashboard;
 //             </div>
 //           </div>
 //         </div>
-        
+
 //         <div className="metric-card heart-rate">
 //           <span className="metric-icon">💓</span>
 //           <div className="metric-content">
@@ -618,7 +666,7 @@ export default FitnessDashboard;
 //             </div>
 //           </div>
 //         </div>
-        
+
 //         <div className="dashboard-content">
 //           <div className="main-content">
 //             <div className="left-sidebar">
@@ -633,7 +681,7 @@ export default FitnessDashboard;
 
 //             <div className="center-content">
 //               {renderTopMetrics()}
-              
+
 //               <div className="dashboard-grid">
 //                 <div className="grid-item activity">
 //                   {renderActivityChart()}
@@ -665,7 +713,6 @@ export default FitnessDashboard;
 
 // export default FitnessDashboard;
 
-
 // // import React, { useState, useEffect, useRef } from 'react';
 // // import { useNavigate } from 'react-router-dom';
 // // import { getAuth, onAuthStateChanged } from 'firebase/auth';
@@ -677,7 +724,7 @@ export default FitnessDashboard;
 // //   const [selectedPlan, setSelectedPlan] = useState(null);
 // //   const [paymentComplete, setPaymentComplete] = useState(false);
 // //   const [purchasedPlans, setPurchasedPlans] = useState([]);
-  
+
 // //   // Dummy payment data
 // //   const [paymentData, setPaymentData] = useState({
 // //     cardName: "John Doe",
@@ -685,7 +732,7 @@ export default FitnessDashboard;
 // //     expDate: "12/25",
 // //     cvv: "123"
 // //   });
-  
+
 // //   const paymentSectionRef = useRef(null);
 // //   const navigate = useNavigate();
 
@@ -699,22 +746,22 @@ export default FitnessDashboard;
 // //         navigate('/login');
 // //       }
 // //     });
-    
+
 // //     return () => unsubscribe();
 // //   }, [navigate]);
 
 // //   const handlePayment = (plan) => {
 // //     setSelectedPlan(plan);
-    
+
 // //     // Scroll to payment section
 // //     if (paymentSectionRef.current) {
-// //       paymentSectionRef.current.scrollIntoView({ 
+// //       paymentSectionRef.current.scrollIntoView({
 // //         behavior: 'smooth',
 // //         block: 'start'
 // //       });
 // //     }
 // //   };
-  
+
 // //   const handleInputChange = (e) => {
 // //     const { id, value } = e.target;
 // //     setPaymentData(prevData => ({
@@ -722,14 +769,14 @@ export default FitnessDashboard;
 // //       [id]: value
 // //     }));
 // //   };
-  
+
 // //   const processPayment = (e) => {
 // //     e.preventDefault();
 // //     // Simulate payment processing
 // //     setTimeout(() => {
 // //       setPaymentComplete(true);
 // //       setPurchasedPlans([...purchasedPlans, selectedPlan]);
-      
+
 // //       // Reset payment form after 3 seconds
 // //       setTimeout(() => {
 // //         setPaymentComplete(false);
@@ -737,7 +784,7 @@ export default FitnessDashboard;
 // //       }, 3000);
 // //     }, 1500);
 // //   };
-  
+
 // //   const isPlanPurchased = (plan) => {
 // //     return purchasedPlans.includes(plan);
 // //   };
@@ -908,7 +955,7 @@ export default FitnessDashboard;
 // //                   <span className="price">$9.99</span>
 // //                   <span className="period">/month</span>
 // //                 </div>
-// //                 <button 
+// //                 <button
 // //                   className="plan-button"
 // //                   onClick={() => handlePayment('beginner')}
 // //                   disabled={isPlanPurchased('beginner')}
@@ -917,7 +964,7 @@ export default FitnessDashboard;
 // //                 </button>
 // //               </div>
 // //             </div>
-            
+
 // //             {/* Intermediate Plan */}
 // //             <div className="plan-card featured">
 // //               <div className="plan-badge">Most Popular</div>
@@ -936,7 +983,7 @@ export default FitnessDashboard;
 // //                   <span className="price">$19.99</span>
 // //                   <span className="period">/month</span>
 // //                 </div>
-// //                 <button 
+// //                 <button
 // //                   className="plan-button"
 // //                   onClick={() => handlePayment('intermediate')}
 // //                   disabled={isPlanPurchased('intermediate')}
@@ -945,7 +992,7 @@ export default FitnessDashboard;
 // //                 </button>
 // //               </div>
 // //             </div>
-            
+
 // //             {/* Advanced Plan */}
 // //             <div className="plan-card">
 // //               <div className="plan-header advanced">
@@ -963,7 +1010,7 @@ export default FitnessDashboard;
 // //                   <span className="price">$29.99</span>
 // //                   <span className="period">/month</span>
 // //                 </div>
-// //                 <button 
+// //                 <button
 // //                   className="plan-button"
 // //                   onClick={() => handlePayment('advanced')}
 // //                   disabled={isPlanPurchased('advanced')}
@@ -974,9 +1021,9 @@ export default FitnessDashboard;
 // //             </div>
 // //           </div>
 // //         </div>
-        
+
 // //         {/* Payment Section */}
-// //         <div 
+// //         <div
 // //           ref={paymentSectionRef}
 // //           className={`payment-section ${selectedPlan ? 'active' : ''}`}
 // //           id="payment"
@@ -1001,54 +1048,54 @@ export default FitnessDashboard;
 // //                   </div>
 // //                 </div>
 // //               </div>
-              
+
 // //               <form className="payment-form" onSubmit={processPayment}>
 // //                 <div className="form-group">
 // //                   <label htmlFor="cardName">Name on Card</label>
-// //                   <input 
-// //                     type="text" 
-// //                     id="cardName" 
+// //                   <input
+// //                     type="text"
+// //                     id="cardName"
 // //                     value={paymentData.cardName}
 // //                     onChange={handleInputChange}
-// //                     required 
+// //                     required
 // //                   />
 // //                 </div>
-                
+
 // //                 <div className="form-group">
 // //                   <label htmlFor="cardNumber">Card Number</label>
-// //                   <input 
-// //                     type="text" 
-// //                     id="cardNumber" 
+// //                   <input
+// //                     type="text"
+// //                     id="cardNumber"
 // //                     value={paymentData.cardNumber}
 // //                     onChange={handleInputChange}
-// //                     required 
+// //                     required
 // //                   />
 // //                 </div>
-                
+
 // //                 <div className="form-row">
 // //                   <div className="form-group">
 // //                     <label htmlFor="expDate">Expiration Date</label>
-// //                     <input 
-// //                       type="text" 
-// //                       id="expDate" 
+// //                     <input
+// //                       type="text"
+// //                       id="expDate"
 // //                       value={paymentData.expDate}
 // //                       onChange={handleInputChange}
-// //                       required 
+// //                       required
 // //                     />
 // //                   </div>
-                  
+
 // //                   <div className="form-group">
 // //                     <label htmlFor="cvv">CVV</label>
-// //                     <input 
-// //                       type="text" 
-// //                       id="cvv" 
+// //                     <input
+// //                       type="text"
+// //                       id="cvv"
 // //                       value={paymentData.cvv}
 // //                       onChange={handleInputChange}
-// //                       required 
+// //                       required
 // //                     />
 // //                   </div>
 // //                 </div>
-                
+
 // //                 <button type="submit" className="payment-button">
 // //                   Complete Payment
 // //                 </button>
@@ -1097,7 +1144,7 @@ export default FitnessDashboard;
 // // //         navigate('/login');
 // // //       }
 // // //     });
-    
+
 // // //     return () => unsubscribe();
 // // //   }, [navigate]);
 
@@ -1272,7 +1319,7 @@ export default FitnessDashboard;
 // // //                   <span className="price">$9.99</span>
 // // //                   <span className="period">/month</span>
 // // //                 </div>
-// // //                 <button 
+// // //                 <button
 // // //                   className="plan-button"
 // // //                   onClick={() => handlePayment('beginner')}
 // // //                 >
@@ -1280,7 +1327,7 @@ export default FitnessDashboard;
 // // //                 </button>
 // // //               </div>
 // // //             </div>
-            
+
 // // //             {/* Intermediate Plan */}
 // // //             <div className="plan-card featured">
 // // //               <div className="plan-badge">Most Popular</div>
@@ -1299,7 +1346,7 @@ export default FitnessDashboard;
 // // //                   <span className="price">$19.99</span>
 // // //                   <span className="period">/month</span>
 // // //                 </div>
-// // //                 <button 
+// // //                 <button
 // // //                   className="plan-button"
 // // //                   onClick={() => handlePayment('intermediate')}
 // // //                 >
@@ -1307,7 +1354,7 @@ export default FitnessDashboard;
 // // //                 </button>
 // // //               </div>
 // // //             </div>
-            
+
 // // //             {/* Advanced Plan */}
 // // //             <div className="plan-card">
 // // //               <div className="plan-header advanced">
@@ -1325,7 +1372,7 @@ export default FitnessDashboard;
 // // //                   <span className="price">$29.99</span>
 // // //                   <span className="period">/month</span>
 // // //                 </div>
-// // //                 <button 
+// // //                 <button
 // // //                   className="plan-button"
 // // //                   onClick={() => handlePayment('advanced')}
 // // //                 >

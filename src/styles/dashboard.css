@@ -1,6 +1,6 @@
 /* Main container styles */
 .app-container {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   color: #333;
   background-color: #f5f7fa;
   min-height: 100vh;
@@ -63,7 +63,10 @@
 /* Top metrics section */
 .top-metrics {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* Changed to 3 columns since we removed visualization-image */
+  grid-template-columns: repeat(
+    3,
+    1fr
+  ); /* Changed to 3 columns since we removed visualization-image */
   gap: 16px;
 }
 
@@ -124,17 +127,17 @@
 
 /* Weight card specific */
 .metric-card.weight {
-  border-left: 4px solid #0088FE;
+  border-left: 4px solid #0088fe;
 }
 
 /* Steps card specific */
 .metric-card.steps {
-  border-left: 4px solid #00C49F;
+  border-left: 4px solid #00c49f;
 }
 
 /* Calories card specific */
 .metric-card.calories {
-  border-left: 4px solid #FFBB28;
+  border-left: 4px solid #ffbb28;
 }
 
 .calories-gauge {
@@ -284,7 +287,7 @@
   width: 160px;
   height: 160px;
   border-radius: 50%;
-  background: conic-gradient(#0088FE 0% 80%, #eee 80% 100%);
+  background: conic-gradient(#0088fe 0% 80%, #eee 80% 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -293,7 +296,7 @@
 }
 
 .big-progress-circle::before {
-  content: '';
+  content: "";
   position: absolute;
   width: 120px;
   height: 120px;
@@ -314,12 +317,21 @@
   max-width: 200px;
 }
 
+.dashboard-wrapper-new {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 100%;
+  margin-left: 300px;
+}
+
 /* Media queries for responsiveness */
 @media (max-width: 1024px) {
   .main-content {
     grid-template-columns: 1fr;
   }
-  
+
   .top-metrics {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -329,11 +341,11 @@
   .dashboard-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .dashboard-container {
     margin-left: 80px; /* Adjust margin for collapsed sidebar */
   }
-  
+
   .app-container > nav {
     width: 60px; /* Collapsed nav width */
   }
@@ -343,18 +355,18 @@
   .top-metrics {
     grid-template-columns: 1fr;
   }
-  
+
   .dashboard-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 16px;
   }
-  
+
   .dashboard-container {
     margin-left: 0; /* Remove margin when sidebar is hidden */
     margin-top: 60px; /* Add top margin to avoid overlap with mobile menu button */
   }
-  
+
   .app-container > nav {
     width: 100%;
     height: auto;
