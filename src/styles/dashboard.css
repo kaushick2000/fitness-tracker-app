@@ -1,532 +1,367 @@
-/* Base styles */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  }
-  
-  body {
-    background-color: #f7f8fc;
-    color: #333;
-  }
-  
-  .app-container {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-  }
-  
-  /* Dashboard Container */
-  .dashboard-container {
-    flex: 1;
-    padding: 20px;
-    max-width: 1400px;
-    margin: 0 auto;
-  }
-  
-  /* Dashboard Header */
-  .dashboard-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-  }
-  
-  .greeting-section h1 {
-    font-size: 16px;
-    color: #888;
-    margin-bottom: 4px;
-  }
-  
-  .greeting-section h2 {
-    font-size: 24px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  
-  .greeting-section h2 .star-icon {
-    color: #ffc107;
-    font-size: 20px;
-  }
-  
-  .header-actions {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-  
-  .subscribe-btn {
-    background-color: #ff6b35;
-    color: white;
-    border: none;
-    padding: 8px 20px;
-    border-radius: 8px;
-    font-weight: 500;
-    cursor: pointer;
-  }
-  
-  .notification-icon, .help-icon {
-    font-size: 20px;
-    cursor: pointer;
-    color: #666;
-  }
-  
-  .notification-icon {
-    color: #ffa500;
-  }
-  
-  .help-icon {
-    color: #888;
-  }
-  
-  .user-profile {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 20px;
-    background-color: white;
-    border-radius: 16px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    margin-bottom: 20px;
-    text-align: center;
-  }
-  
-  .profile-image {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin: 0 auto 8px;
-    background-color: #f0f0f0;
-  }
-  
-  .user-info {
-    text-align: center;
-    width: 100%;
-  }
-  
-  .user-info h3 {
-    font-size: 18px;
-    font-weight: 500;
-    margin-bottom: 4px;
-  }
-  
-  .user-status {
-    font-size: 14px;
-    color: #888;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-  }
-  
-  .user-status .star-icon {
-    color: #ffc107;
-  }
-  
-  /* Dashboard Content */
-  .dashboard-content {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-  }
-  
+/* Main container styles */
+.app-container {
+  font-family: 'Inter', sans-serif;
+  color: #333;
+  background-color: #f5f7fa;
+  min-height: 100vh;
+  padding: 20px;
+  position: relative; /* Added for proper positioning */
+}
+
+/* Nav positioning fix */
+.app-container > nav {
+  position: fixed; /* Fix Nav to the side */
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 230px; /* Fixed width for sidebar */
+  z-index: 100;
+}
+
+.dashboard-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  margin-left: 250px; /* Maintain margin to accommodate sidebar width */
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+/* Dashboard header styles */
+.dashboard-header {
+  padding: 24px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.greeting-section h2 {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+  color: #333;
+}
+
+/* Dashboard content styles */
+.dashboard-content {
+  padding: 24px;
+}
+
+.main-content {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 24px;
+}
+
+.center-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Top metrics section */
+.top-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* Changed to 3 columns since we removed visualization-image */
+  gap: 16px;
+}
+
+.visualization-image {
+  grid-column: span 1;
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.visualization-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.metric-card {
+  background-color: white;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.metric-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+}
+
+.metric-icon {
+  font-size: 24px;
+  margin-right: 16px;
+}
+
+.metric-content {
+  flex: 1;
+}
+
+.metric-content h3 {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
+}
+
+.metric-value {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.metric-progress {
+  font-size: 12px;
+  color: #888;
+}
+
+/* Weight card specific */
+.metric-card.weight {
+  border-left: 4px solid #0088FE;
+}
+
+/* Steps card specific */
+.metric-card.steps {
+  border-left: 4px solid #00C49F;
+}
+
+/* Calories card specific */
+.metric-card.calories {
+  border-left: 4px solid #FFBB28;
+}
+
+.calories-gauge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.calories-gauge span:first-child {
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.calories-gauge span:last-child {
+  font-size: 12px;
+  color: #888;
+}
+
+/* Dashboard grid for charts */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.grid-item {
+  background-color: white;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Section headers */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.section-header h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.period-selector {
+  font-size: 14px;
+  color: #666;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.dropdown-icon {
+  font-size: 10px;
+  margin-left: 4px;
+}
+
+/* Activity chart */
+.activity-section {
+  height: 100%;
+}
+
+/* Progress donut chart */
+.progress-section {
+  height: 100%;
+}
+
+.donut-container {
+  position: relative;
+}
+
+.donut-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.donut-center span:first-child {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.donut-center span:last-child {
+  font-size: 14px;
+  color: #888;
+}
+
+.workout-types {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.workout-type {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+}
+
+.type-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+
+.type-name {
+  margin-right: auto;
+  color: #666;
+}
+
+.type-value {
+  font-weight: 500;
+}
+
+/* Monthly progress section */
+.right-sidebar {
+  background-color: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.monthly-progress h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 20px 0;
+}
+
+.progress-circle-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.big-progress-circle {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: conic-gradient(#0088FE 0% 80%, #eee 80% 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.big-progress-circle::before {
+  content: '';
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  background-color: white;
+  border-radius: 50%;
+}
+
+.progress-percentage {
+  position: relative;
+  font-size: 24px;
+  font-weight: 600;
+  z-index: 1;
+}
+
+.progress-text {
+  font-size: 14px;
+  color: #666;
+  max-width: 200px;
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 1024px) {
   .main-content {
-    display: flex;
-    gap: 24px;
+    grid-template-columns: 1fr;
   }
   
-  /* Left Sidebar */
-  .left-sidebar {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    padding: 20px 12px;
-    background-color: white;
-    border-radius: 16px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    align-items: center;
-  }
-  
-  .menu-item {
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 12px;
-    cursor: pointer;
-    font-size: 20px;
-    color: #888;
-  }
-  
-  .menu-item.active {
-    background-color: #ff6b35;
-    color: white;
-  }
-  
-  /* Center Content */
-  .center-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-  }
-  
-  /* Top Metrics */
   .top-metrics {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-  }
-  
-  .metric-card {
-    background-color: white;
-    border-radius: 16px;
-    padding: 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  }
-  
-  .metric-card.weight {
-    background-color: white;
-    color: #333;
-  }
-  
-  .metric-card.steps {
-    background-color: #00c2a3;
-    color: white;
-  }
-  
-  .metric-card.calories {
-    background-color: #ff3a7c;
-    color: white;
-  }
-  
-  .metric-icon {
-    font-size: 24px;
-  }
-  
-  .metric-content {
-    flex: 1;
-  }
-  
-  .metric-content h3 {
-    font-size: 14px;
-    margin-bottom: 8px;
-  }
-  
-  .metric-value {
-    font-size: 24px;
-    font-weight: 600;
-  }
-  
-  .metric-progress {
-    font-size: 12px;
-    opacity: 0.8;
-  }
-  
-  /* Dashboard Grid */
-  .dashboard-grid {
-    display: grid;
     grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(2, auto);
-    gap: 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
   }
   
-  .grid-item {
-    background-color: white;
-    border-radius: 16px;
-    padding: 20px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  .dashboard-container {
+    margin-left: 80px; /* Adjust margin for collapsed sidebar */
   }
   
-  /* Section Headers */
-  .section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
+  .app-container > nav {
+    width: 60px; /* Collapsed nav width */
+  }
+}
+
+@media (max-width: 576px) {
+  .top-metrics {
+    grid-template-columns: 1fr;
   }
   
-  h3 {
-    font-size: 18px;
-    font-weight: 600;
-    margin-bottom: 16px;
-  }
-  
-  .period-selector {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 14px;
-    color: #888;
-    cursor: pointer;
-  }
-  
-  /* Activity Section */
-  .activity-section {
-    width: 100%;
-  }
-  
-  .activity-chart {
-    width: 100%;
-    height: 150px;
-    display: flex;
-    align-items: flex-end;
-    gap: 10px;
-    margin-top: 20px;
-    margin-bottom: 10px;
-  }
-  
-  .activity-bar {
-    flex: 1;
-    background-color: #ff6b35;
-    border-radius: 6px 6px 0 0;
-    position: relative;
-  }
-  
-  .activity-bar.mon { height: 60%; }
-  .activity-bar.tue { height: 70%; }
-  .activity-bar.wed { height: 55%; }
-  .activity-bar.thu { height: 80%; }
-  .activity-bar.fri { height: 95%; }
-  .activity-bar.sat { height: 50%; }
-  .activity-bar.sun { height: 45%; }
-  
-  .activity-days {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-  }
-  
-  .day-label {
-    flex: 1;
-    text-align: center;
-    font-size: 14px;
-    color: #888;
-  }
-  
-  /* Progress Section */
-  .progress-section {
-    width: 100%;
-  }
-  
-  .donut-container {
-    position: relative;
-    height: 200px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-  
-  .donut-chart {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    background: conic-gradient(
-      #00c2a3 0% 30%,
-      #4285f4 30% 50%,
-      #ffc107 50% 65%,
-      #ff6b35 65% 100%
-    );
-    position: relative;
-  }
-  
-  .donut-center {
-    position: absolute;
-    width: 100px;
-    height: 100px;
-    background: white;
-    border-radius: 50%;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: flex;
+  .dashboard-header {
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .donut-center .hours {
-    font-size: 24px;
-    font-weight: 600;
-  }
-  
-  .donut-center .label {
-    font-size: 14px;
-    color: #888;
-  }
-  
-  .workout-types {
-    width: 100%;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px 20px;
-  }
-  
-  .workout-type {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  
-  .workout-color {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-  }
-  
-  .workout-color.cardio { background-color: #4285f4; }
-  .workout-color.weights { background-color: #ffc107; }
-  .workout-color.stretching { background-color: #00c2a3; }
-  .workout-color.strength { background-color: #ff6b35; }
-  
-  .workout-name {
-    font-size: 14px;
-    flex: 1;
-  }
-  
-  .workout-hours {
-    font-size: 14px;
-    color: #888;
-  }
-  
-  /* Right Sidebar */
-  .right-sidebar {
-    width: 300px;
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-  }
-  
-  /* Monthly Progress */
-  .monthly-progress {
-    background-color: white;
-    border-radius: 16px;
-    padding: 20px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    text-align: center;
-  }
-  
-  .progress-circle-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
     gap: 16px;
-    margin-top: 20px;
   }
   
-  .progress-circle {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    border: 8px solid #ff6b35;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
+  .dashboard-container {
+    margin-left: 0; /* Remove margin when sidebar is hidden */
+    margin-top: 60px; /* Add top margin to avoid overlap with mobile menu button */
   }
   
-  .progress-percentage {
-    font-size: 28px;
-    font-weight: 600;
+  .app-container > nav {
+    width: 100%;
+    height: auto;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
   }
-  
-  .progress-text {
-    text-align: center;
-    font-size: 14px;
-    color: #666;
-    margin-top: 16px;
-  }
-  
-  /* Responsive adjustments */
-  @media (max-width: 1200px) {
-    .top-metrics {
-      grid-template-columns: repeat(2, 1fr);
-    }
-    
-    .dashboard-grid {
-      grid-template-columns: 1fr;
-    }
-    
-    .main-content {
-      flex-direction: column;
-    }
-    
-    .left-sidebar {
-      flex-direction: row;
-      justify-content: space-around;
-      padding: 12px;
-    }
-    
-    .right-sidebar {
-      width: 100%;
-    }
-  }
-  
-  @media (max-width: 768px) {
-    .top-metrics {
-      grid-template-columns: 1fr;
-    }
-    
-    .dashboard-header {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 16px;
-    }
-    
-    .header-actions {
-      width: 100%;
-      justify-content: space-between;
-    }
-    
-    .workout-types {
-      grid-template-columns: 1fr;
-    }
-  }
-  
-  @media (max-width: 480px) {
-    .dashboard-container {
-      padding: 12px;
-    }
-    
-    .metric-card {
-      padding: 12px;
-    }
-    
-    .grid-item {
-      padding: 16px;
-    }
-    
-    .progress-circle {
-      transform: scale(0.9);
-    }
-  }
-  
-  /* Print styles */
-  @media print {
-    .left-sidebar, .header-actions, .subscribe-btn {
-      display: none;
-    }
-    
-    body {
-      background-color: white;
-    }
-    
-    .dashboard-container {
-      max-width: 100%;
-      padding: 0;
-    }
-    
-    .grid-item, .metric-card, .monthly-progress {
-      box-shadow: none;
-      border: 1px solid #eee;
-    }
-  }
+}

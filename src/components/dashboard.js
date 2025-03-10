@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'; 
+import homepageimg2 from '../assets/homepageimg2.jpg'; 
+import Nav from '../components/Nav';
 import { 
   BarChart, 
   Bar, 
@@ -71,10 +73,11 @@ const FitnessDashboard = () => {
     
     return (
       <div className="top-metrics">
+        {/* <div className="visualization-image">
+            <img src={homepageimg2}  />
+          </div> */}
         <div className="metric-card weight">
-          <span className="metric-icon">
-            <img src="/assets/weight-icon.png" alt="Weight" />
-          </span>
+          <span className="metric-icon">⚖️</span>
           <div className="metric-content">
             <h3>Weight</h3>
             <div className="metric-value">{latestData.weight} lbs</div>
@@ -92,9 +95,7 @@ const FitnessDashboard = () => {
         </div>
         
         <div className="metric-card calories">
-          <span className="metric-icon">
-            <img src="/assets/calories-icon.png" alt="Calories" />
-          </span>
+          <span className="metric-icon">💦</span>
           <div className="metric-content">
             <h3>Calories</h3>
             <div className="calories-gauge">
@@ -195,30 +196,17 @@ const FitnessDashboard = () => {
 
   return (
     <div className="app-container">
+      {/* Move Nav component outside the dashboard content */}
+      <Nav />
       <div className="dashboard-container">
         <div className="dashboard-header">
           <div className="greeting-section">
-            <h1>Good Morning</h1>
             <h2>Welcome Back ⭐</h2>
-          </div>
-          <div className="header-actions">
-            <button className="subscribe-btn">Subscribe</button>
-            <div className="notification-icon">🔔</div>
-            <div className="help-icon">❓</div>
-          </div>
-          <div className="user-profile">
-            <img src="/assets/profile.jpg" alt="User Profile" className="profile-image" />
-            <div className="user-info">
-              <h3>Thomas Fletcher</h3>
-              <div className="user-status">⭐ Premium Member</div>
-            </div>
           </div>
         </div>
         
         <div className="dashboard-content">
           <div className="main-content">
-           
-
             <div className="center-content">
               {renderTopMetrics()}
               
@@ -243,7 +231,6 @@ const FitnessDashboard = () => {
 };
 
 export default FitnessDashboard;
-
 
 
 // import React, { useState } from 'react';

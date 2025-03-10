@@ -1,18 +1,18 @@
-/* nav.css */
+
 .nav-container {
     position: fixed;
     top: 0;
     left: 0;
-    width: 230px; /* Match this with the margin-left in progress-dashboard-container */
+    width: 230px; 
     height: 100vh;
-    background-color: #1d3229; /* Your current dark green */
+    background-color: #1d3229; 
     color: white;
     overflow-y: auto;
     z-index: 10;
   }
   
   .sidebar {
-    width: 230px; /* Adjusted to match margin-left in ProgressDashboard */
+    width: 230px;
     background-color: #1e322d;
     color: white;
     position: fixed;
@@ -88,8 +88,7 @@
       padding: 0;
     }
     
-    /* Mobile menu button */
-    .mobile-menu {
+      .mobile-menu {
       display: block;
       position: fixed;
       top: 20px;
@@ -107,8 +106,7 @@
       cursor: pointer;
     }
     
-    /* When mobile menu is active */
-    .sidebar.active {
+       .sidebar.active {
       width: 230px;
     }
     
