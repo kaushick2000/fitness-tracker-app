@@ -7,7 +7,7 @@
   }
   
   .nav-container {
-    width: 212px; /* Width of your sidebar menu */
+    width: 240px; /* Width of your sidebar menu */
     position: fixed;
     top: 0;
     left: 0;
@@ -18,8 +18,8 @@
   
   .subscription-payment-container {
     flex: 1;
-    width: calc(100% - 212px); /* Full width minus sidebar width */
-    margin-left: 212px; /* Push content to the right of sidebar */
+    width: calc(100% - 240px); /* Full width minus sidebar width */
+    margin-left: 240px; /* Push content to the right of sidebar */
     max-width: 1200px;
     padding: 2rem;
     font-family: 'Arial', sans-serif;

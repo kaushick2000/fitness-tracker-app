@@ -315,6 +315,8 @@ body, html {
   border-radius: 8px;
   overflow: hidden;
   box-shadow: var(--shadow);
+  max-height: 1000px;
+  overflow-y: scroll;
 }
 
 .exercise-header {
