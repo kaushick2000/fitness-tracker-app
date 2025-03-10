@@ -102,13 +102,13 @@ const Nav = ({ purchasedPlans = [] }) => {
           <h2>Fitness Tracker</h2>
         </div>
         <div className="nav-items">
-          <a
+          {/* <a
             className={`nav-item ${activeNavItem === "home" ? "active" : ""}`}
             onClick={() => handleNavigation("home")}
           >
             <span className="nav-icon">🏠</span>
             <span>Home</span>
-          </a>
+          </a> */}
           <a
             className={`nav-item ${
               activeNavItem === "dashboard" ? "active" : ""

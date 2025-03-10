@@ -6,7 +6,7 @@ const Profile = () => {
   const defaultUser = {
     personalInfo: {
       firstName: "Alex",
-      lastName: "Johnson",
+      lastName: "John",
       email: "alex.johnson@example.com",
       gender: "Male",
       birthdate: "1990-05-15",

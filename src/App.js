@@ -39,10 +39,6 @@ function App() {
           <Route path='/contact' element={<ContactUs/>}/>
           <Route path='/trainer' element={<Trainer/>}/>
           <Route path='/nutrition' element={<Nutrition/>}/>
-          
-          {/* <Route path="/payment" element={<Payment />} />
-          <Route path="/payment-success" element={<PaymentSuccess />} /> */}
-          {/* Default route redirects to home page instead of login */}
           <Route path="/" element={<Navigate to="/home" replace />} />
         </Routes>
       </div>

@@ -16,7 +16,7 @@ import {
   Pie,
   Cell,
 } from "recharts";
-
+import NutritionVisualization from "./NutritionVisualization";
 const mockProgressData = [
   {
     month: "Jan",
@@ -115,9 +115,6 @@ const FitnessDashboard = () => {
     const latestData = mockProgressData[mockProgressData.length - 1];
     return (
       <div className="top-metrics">
-        {/* <div className="visualization-image">
-            <img src={homepageimg2}  />
-          </div> */}
         <div className="metric-card weight">
           <span className="metric-icon">⚖️</span>
           <div className="metric-content">
@@ -192,7 +189,6 @@ const FitnessDashboard = () => {
   };
 
   const renderProgressDonut = () => {
-    
     return (
       <div className="progress-section">
         <div className="section-header">
@@ -245,17 +241,17 @@ const FitnessDashboard = () => {
     );
   };
   const [purchasedPlans, setPurchasedPlans] = useState(() => {
-    const savedPlans = localStorage.getItem('purchasedPlans');
+    const savedPlans = localStorage.getItem("purchasedPlans");
     return savedPlans ? JSON.parse(savedPlans) : [];
   });
-  
+
   useEffect(() => {
-    localStorage.setItem('purchasedPlans', JSON.stringify(purchasedPlans));
+    localStorage.setItem("purchasedPlans", JSON.stringify(purchasedPlans));
   }, [purchasedPlans]);
   return (
     <div className="app-container">
       {/* Move Nav component outside the dashboard content */}
-      <Nav purchasedPlans={purchasedPlans}/>
+      <Nav purchasedPlans={purchasedPlans} />
       <div className="dashboard-container dashboard-wrapper-new">
         <div className="dashboard-header">
           <div className="greeting-section">
@@ -274,6 +270,18 @@ const FitnessDashboard = () => {
                 </div>
                 <div className="grid-item progress">
                   {renderProgressDonut()}
+                </div>
+                <div className="grid-item progress">
+                  <div className="nutrition-visualization-section">
+                    <h2>Track Your Nutrition Journey</h2>
+                    <p className="section-description">
+                      Monitor your calorie intake and macro distribution with
+                      our intuitive visualizations
+                    </p>
+                    <div className="nutrition-visualization-wrapper">
+                      <NutritionVisualization />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
