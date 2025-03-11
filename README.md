@@ -14,6 +14,14 @@
 - **Username:** akshay.prassanna08@gmail.com
 - **Password:** test123
 
+- Make sure you have Node.js Installed
+- Install all required packages at root directoryusing
+  `npm install`
+- Run the project using 
+  `npm run start`
+- Build project using 
+  `npm run build`
+
 ## Development Flow
 
 ### Home Page (`src/components/HomePage.js`)
