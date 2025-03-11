@@ -3,6 +3,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 import "../styles/nav.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faTimes } from "@fortawesome/free-solid-svg-icons"; // Import icons
+import { getAuth, signOut } from "firebase/auth";
+import { toast } from "react-toastify";
 
 const Nav = ({ purchasedPlans = [] }) => {
   const navigate = useNavigate();
@@ -42,6 +44,18 @@ const Nav = ({ purchasedPlans = [] }) => {
     else if (path.includes("nutrition")) setActiveNavItem("nutrition");
     else setActiveNavItem("dashboard");
   }, [location.pathname]);
+
+  const handleLogout = async () => {
+    const auth = getAuth();
+    try {
+      await signOut(auth);
+      navigate("/login"); // or wherever you want to redirect after logout
+      toast.success("Logged out successfully");
+    } catch (error) {
+      console.error("Logout error:", error);
+      toast.error("Failed to log out");
+    }
+  };
 
   const handleNavigation = (route) => {
     // Don't navigate to trainer if no plan is purchased
@@ -179,6 +193,7 @@ const Nav = ({ purchasedPlans = [] }) => {
             <span className="nav-icon">✉️</span>
             <span>Contact</span>
           </a>
+
           {hasActivePlan && (
             <a
               className={`nav-item ${
@@ -190,6 +205,11 @@ const Nav = ({ purchasedPlans = [] }) => {
               <span>Trainer</span>
             </a>
           )}
+
+          <a className="nav-item logout" onClick={handleLogout}>
+            <span className="nav-icon">🚪</span>
+            <span>Logout</span>
+          </a>
         </div>
       </div>
     </>

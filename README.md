@@ -1,70 +1,89 @@
-# Getting Started with Create React App
+# Fitness Tracker Application
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Team Members
+- **Suresh, Kaushick** (1002237680)
+- **Sivaprakash, Akshay Prassanna** (1002198274)
+- **Sonwane, Pratik** (1002170610)
+- **Shaik, Arfan** (1002260039)
+- **Sheth, Jeet** (1002175315)
 
-## Available Scripts
+## Login Credentials (For Testing Purposes)
+- **Username:** akshay.prassanna08@gmail.com
+- **Password:** test123
 
-In the project directory, you can run:
+## Development Flow
 
-### `npm start`
+### Home Page (`src/components/HomePage.js`)
+- Introduction to the fitness tracker
+- Overview of available fitness plans
+- User feedback and testimonials
+- Links for login and sign-up
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Sign-Up (`src/components/Signup.js`)
+- Users are required to provide First Name, Last Name, Email, and Password
+- Registration is managed through Firebase
+- Multi-factor authentication is implemented
+- Confirmation email is sent to the user's registered email address
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Login (`src/components/Login.js`)
+- Users can log in using their registered email ID and password
+- "Forgot Password" functionality is implemented via Firebase
 
-### `npm test`
+### Dashboard (`src/components/Dashboard.js`)
+- Displays key fitness metrics such as weight, steps taken, and calories burned
+- Monthly progress visualized using a pie chart
+- Daily activity breakdown shown via a bar chart
+- Time spent on exercises represented with a pie chart
+- Daily calorie intake and macronutrient breakdown displayed
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Activity Logging (`src/components/ActivityLogging.js`)
+- Users can log their daily steps and track them
+- Exercise time (active minutes) can be recorded
+- AI-driven exercise recommendations based on user needs
+- Automatic exercise logging for users with a purchased fitness plan
+- "Forgot Password" functionality integrated via Firebase
+- Search bar to find exercises based on specific body parts
+- Each activity includes a linked YouTube tutorial
+- Logged activities can be saved for daily tracking
+- Workout data can be exported and imported for progress tracking
 
-### `npm run build`
+### Progress Dashboard (`src/components/ProgressDashboard.js`)
+- Visual representation of user progress through interactive charts
+- Monthly progress comparison via line and bar charts
+- Metrics include weight, steps, calories burned, and workout duration
+- AI-generated insights for optimized workouts
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Analytics Visualization (`src/components/AnalyticsDashboard.js`)
+- Data can be filtered based on time frame, metrics, and body parts
+- Trend analysis of calories burned over time
+- Predictive analytics showcasing actual vs. projected weight trends
+- Body part focus visualization for progress tracking
+- Exercise difficulty distribution across beginner, intermediate, and advanced levels
+- AI-based recommendations based on user activity patterns
+- AI-driven fitness insights for improved health and performance
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Nutrition (`src/components/Nutrition.js`)
+- Search functionality to fetch detailed nutritional information of food items
+- Users can add food to their meals and track calorie intake
+- Meal history can be saved for future reference
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Plans & Subscription (`src/components/SubscriptionPayment.js`)
+- Users can choose between Beginner, Intermediate, and Advanced fitness plans
+- Subscription purchase simulation is implemented
+- Upon plan purchase, the following features are unlocked:
+  - Access to trainer details
+  - Automatic addition of activities in the Activity Logging section
 
-### `npm run eject`
+### Profile (`src/components/Profile.js`)
+- Displays user's personal and fitness-related information
+- Users can edit their details as needed
+- Target weight and other fitness goals can be set
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Trainer (`src/components/Trainer.js`)
+- Trainer details are displayed
+- Users can book training sessions with their assigned trainer
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### Contact Us (`src/components/ContactUs.js`)
+- Contact form for users to reach out to the development team
+- Displays contact information
+- Office location details are provided

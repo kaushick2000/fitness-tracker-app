@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { getAuth, signInWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify'; // Import toast
-import '../styles/signup.css'; // Use shared CSS (or '../styles/login.css' if separate)
+import { useNavigate, Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import '../styles/signup.css';
 
 const LoginForm = () => {
   const [formData, setFormData] = useState({
@@ -94,7 +94,7 @@ const LoginForm = () => {
             value={formData.email}
             onChange={handleChange}
             required
-            placeholder="Enter your email" /* Added placeholder for better mobile UX */
+            placeholder="Enter your email"
           />
         </div>
 
@@ -107,8 +107,21 @@ const LoginForm = () => {
             value={formData.password}
             onChange={handleChange}
             required
-            placeholder="Enter your password" /* Added placeholder for better mobile UX */
+            placeholder="Enter your password"
           />
+          {/* Add forgot password link */}
+          <div style={{ textAlign: 'right', marginTop: '0.5rem' }}>
+            <Link 
+              to="/forgot-password" 
+              style={{ 
+                color: '#007bff', 
+                textDecoration: 'none', 
+                fontSize: '0.875rem' 
+              }}
+            >
+              Forgot Password?
+            </Link>
+          </div>
         </div>
 
         <button type="submit" className="signup-button" disabled={loading}>
@@ -120,7 +133,7 @@ const LoginForm = () => {
       <button 
         onClick={() => navigate('/signup')} 
         className="secondary-button"
-        style={{ marginTop: '1rem' }} /* Use rem for scalability */
+        style={{ marginTop: '1rem' }}
       >
         Not signed up? Click here to sign up
       </button>

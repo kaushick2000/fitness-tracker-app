@@ -96,8 +96,80 @@ const ActivityLogging = () => {
     return savedPlans ? JSON.parse(savedPlans) : [];
   });
   const [showRecommendations, setShowRecommendations] = useState(false);
+  const [planWorkoutsAdded, setPlanWorkoutsAdded] = useState(false);
 
-  // Functions defined after state declarations
+  // Function to add workouts based on purchased plan level
+  const addPlanBasedWorkouts = () => {
+    if (planWorkoutsAdded || workoutPlan.length > 0) {
+      return; // Don't add exercises if already added or user already has a plan
+    }
+
+    // Get all exercises from all body parts
+    const allExercises = [];
+    Object.entries(exerciseData.exercises_by_body_part).forEach(([bodyPart, exercises]) => {
+      exercises.forEach(exercise => {
+        allExercises.push({ ...exercise, bodyPart });
+      });
+    });
+
+    // Check if user has a purchased plan
+    if (purchasedPlans && purchasedPlans.length > 0) {
+      const planLevel = purchasedPlans[0].toLowerCase(); // Get the first plan level
+      
+      // Filter exercises based on plan level
+      let levelExercises = [];
+      
+      if (planLevel === "beginner") {
+        levelExercises = allExercises.filter(ex => ex.level.toLowerCase() === "beginner");
+      } else if (planLevel === "intermediate") {
+        levelExercises = allExercises.filter(ex => ex.level.toLowerCase() === "intermediate");
+      } else if (planLevel === "advanced") {
+        levelExercises = allExercises.filter(ex => ex.level.toLowerCase() === "advanced");
+      }
+      
+      // If no exercises found for the level, use all exercises
+      if (levelExercises.length === 0) {
+        levelExercises = allExercises;
+      }
+      
+      // Shuffle the exercises and pick 5 random ones
+      const shuffled = levelExercises.sort(() => 0.5 - Math.random());
+      const selected = shuffled.slice(0, 5);
+      
+      // Add each exercise to the workout plan
+      const newWorkoutPlan = [];
+      selected.forEach(exercise => {
+        // Calculate calories for the exercise
+        const intensityFactors = {
+          Strength: 0.08,
+          Cardio: 0.12,
+          Flexibility: 0.05,
+        };
+
+        const intensityFactor = intensityFactors[exercise.type] || 0.08;
+        const userWeight = userProfile.weight;
+        const duration = 15;
+        const calories = Math.round(userWeight * intensityFactor * duration);
+        
+        const newExercise = {
+          ...exercise,
+          id: Date.now() + Math.random(), // Ensure unique IDs
+          duration,
+          calories,
+          reps: 12,
+          date: selectedDate,
+        };
+        
+        newWorkoutPlan.push(newExercise);
+      });
+      
+      // Set the workout plan with these exercises
+      setWorkoutPlan(newWorkoutPlan);
+      setPlanWorkoutsAdded(true);
+      
+      console.log(`Added ${selected.length} ${planLevel} level exercises to workout plan`);
+    }
+  };
 
   // AI recommendation system
   const getRecommendedExercises = () => {
@@ -279,8 +351,10 @@ const ActivityLogging = () => {
     // Load workout for selected date if it exists
     if (workoutHistory[newDate]) {
       setWorkoutPlan([...workoutHistory[newDate]]);
+      setPlanWorkoutsAdded(true); // Mark as added since we're loading existing data
     } else {
       setWorkoutPlan([]);
+      setPlanWorkoutsAdded(false); // Reset flag for the new date
     }
   };
 
@@ -408,8 +482,16 @@ const ActivityLogging = () => {
     const savedToday = localStorage.getItem(`workout_${today}`);
     if (savedToday) {
       setWorkoutPlan(JSON.parse(savedToday));
+      setPlanWorkoutsAdded(true); // Mark as added since we're loading existing data
     }
   }, []);
+
+  // Add plan-based workouts when exercise data is loaded and plan is available
+  useEffect(() => {
+    if (exerciseData && purchasedPlans.length > 0 && !planWorkoutsAdded && workoutPlan.length === 0) {
+      addPlanBasedWorkouts();
+    }
+  }, [exerciseData, purchasedPlans, planWorkoutsAdded, workoutPlan]);
 
   // Save workout history whenever it changes
   useEffect(() => {

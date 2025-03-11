@@ -20,6 +20,7 @@ import SubscriptionPayment from './components/SubscriptionPayment';
 import ContactUs from './components/ContactUs';
 import Trainer from './components/Trainer';
 import Nutrition from './components/Nutrition';
+import ForgotPassword from './components/ForgotPassword';
 function App() {
   return (
     <Router>
@@ -39,6 +40,7 @@ function App() {
           <Route path='/contact' element={<ContactUs/>}/>
           <Route path='/trainer' element={<Trainer/>}/>
           <Route path='/nutrition' element={<Nutrition/>}/>
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/" element={<Navigate to="/home" replace />} />
         </Routes>
       </div>
