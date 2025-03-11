@@ -1,5 +1,8 @@
 # Fitness Tracker Application
 
+## Hosted at : 
+- **https://axs8276.uta.cloud/**
+
 ## Team Members
 - **Suresh, Kaushick** (1002237680)
 - **Sivaprakash, Akshay Prassanna** (1002198274)
