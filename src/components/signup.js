@@ -6,26 +6,26 @@
  Shaik, Arfan ( 1002260039 ) , 
  Sheth, Jeet ( 1002175315 ) 
 */
-import React, { useState, useEffect } from 'react';
-import { 
-  getAuth, 
-  createUserWithEmailAndPassword, 
-  updateProfile, 
-  sendEmailVerification
-} from 'firebase/auth';
-import { getFirestore, setDoc, doc } from 'firebase/firestore';
-import '../styles/signup.css';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import React, { useState, useEffect } from "react";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  updateProfile,
+  sendEmailVerification,
+} from "firebase/auth";
+import { getFirestore, setDoc, doc } from "firebase/firestore";
+import "../styles/signup.css";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const SignupForm = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-    confirmPassword: ''
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
   });
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -35,39 +35,44 @@ const SignupForm = () => {
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
   const validateForm = () => {
-    if (!formData.firstName || !formData.lastName || !formData.email || !formData.password) {
-      setError('All fields are required');
+    if (
+      !formData.firstName ||
+      !formData.lastName ||
+      !formData.email ||
+      !formData.password
+    ) {
+      setError("All fields are required");
       return false;
     }
-    
+
     if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters');
+      setError("Password must be at least 6 characters");
       return false;
     }
-    
+
     if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
+      setError("Passwords do not match");
       return false;
     }
-    
+
     return true;
   };
 
   const handleSignup = async (e) => {
     e.preventDefault();
-    
+
     if (isSignedUp) {
-      toast.error('You’ve already signed up. Please verify your email.');
+      toast.error("You've already signed up. Please verify your email.");
       return;
     }
 
     if (!validateForm()) return;
-    
+
     setLoading(true);
     setError(null);
 
@@ -76,12 +81,16 @@ const SignupForm = () => {
       const { firstName, lastName, email, password } = formData;
 
       // Create user with email and password
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       const user = userCredential.user;
-      
+
       // Update profile with display name
-      await updateProfile(user, { 
-        displayName: `${firstName} ${lastName}` 
+      await updateProfile(user, {
+        displayName: `${firstName} ${lastName}`,
       });
 
       // Store additional user data in Firestore
@@ -95,46 +104,78 @@ const SignupForm = () => {
         createdAt: new Date().toISOString(),
       });
 
+      // ADDED CODE: Store user data in MySQL database through API
+      try {
+        const apiResponse = await fetch("http://localhost:3000/api/users", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            firstName,
+            lastName,
+            email,
+            password, // Store Firebase UID as password for reference
+            id: user.uid,
+            createdAt: new Date().toISOString(),
+          }),
+        });
+
+        if (!apiResponse.ok) {
+          const errorData = await apiResponse.json();
+          console.error("MySQL database storage failed:", errorData);
+          // Don't fail the whole signup if MySQL storage fails
+          // Just log it and continue
+        } else {
+          console.log("SQL database stored user!");
+        }
+      } catch (mysqlError) {
+        console.error("Error saving to MySQL:", mysqlError);
+        // Continue with signup even if MySQL storage fails
+      }
+
       // Send email verification
       await sendEmailVerification(user);
-      
+
       // Mark signup as complete and show verification prompt
       setIsSignedUp(true);
-      toast.info('Please verify your email before proceeding. A verification link has been sent to your email.');
+      toast.info(
+        "Please verify your email before proceeding. A verification link has been sent to your email."
+      );
       setLoading(false);
 
       // Clear form data to prevent reuse
       setFormData({
-        firstName: '',
-        lastName: '',
-        email: '',
-        password: '',
-        confirmPassword: ''
+        firstName: "",
+        lastName: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
       });
-
     } catch (err) {
-      let errorMessage = 'Failed to create account';
-      
+      let errorMessage = "Failed to create account";
+
       switch (err.code) {
-        case 'auth/email-already-in-use':
-          errorMessage = 'This email is already registered';
+        case "auth/email-already-in-use":
+          errorMessage = "This email is already registered";
           break;
-        case 'auth/invalid-email':
-          errorMessage = 'Invalid email address';
+        case "auth/invalid-email":
+          errorMessage = "Invalid email address";
           break;
-        case 'auth/weak-password':
-          errorMessage = 'Password is too weak';
+        case "auth/weak-password":
+          errorMessage = "Password is too weak";
           break;
-        case 'auth/network-request-failed':
-          errorMessage = 'Network error. Please check your connection and try again.';
+        case "auth/network-request-failed":
+          errorMessage =
+            "Network error. Please check your connection and try again.";
           break;
-        case 'auth/operation-not-allowed':
-          errorMessage = 'Operation not allowed. Please contact support.';
+        case "auth/operation-not-allowed":
+          errorMessage = "Operation not allowed. Please contact support.";
           break;
         default:
-          errorMessage = err.message || 'An unexpected error occurred';
+          errorMessage = err.message || "An unexpected error occurred";
       }
-      
+
       setError(errorMessage);
       toast.error(errorMessage);
       console.error("Signup error:", err);
@@ -155,9 +196,9 @@ const SignupForm = () => {
         }
         if (user.emailVerified && isSignedUp) {
           setEmailVerified(true);
-          toast.success('Email verified successfully! Redirecting to login...');
+          toast.success("Email verified successfully! Redirecting to login...");
           setTimeout(() => {
-            navigate('/login');
+            navigate("/login");
             setIsSignedUp(false);
           }, 2000); // Increased to 2 seconds for better UX
         }
@@ -174,14 +215,18 @@ const SignupForm = () => {
           await user.reload();
           if (user.emailVerified) {
             setEmailVerified(true);
-            toast.success('Email verified successfully! Redirecting to login...');
+            toast.success(
+              "Email verified successfully! Redirecting to login..."
+            );
             setTimeout(() => {
-              navigate('/login');
+              navigate("/login");
               setIsSignedUp(false);
             }, 2000);
             clearInterval(intervalId);
           } else if (pollCount >= maxPolls) {
-            toast.error('Email verification timed out. Please check your email or try again.');
+            toast.error(
+              "Email verification timed out. Please check your email or try again."
+            );
             clearInterval(intervalId);
           }
           pollCount++;
@@ -198,7 +243,7 @@ const SignupForm = () => {
   return (
     <div className="signup-container">
       <h2>Create Account</h2>
-      
+
       {error && <div className="error-message">{error}</div>}
       {emailVerified && (
         <div className="success-message">
@@ -210,58 +255,58 @@ const SignupForm = () => {
           Please check your email to verify your account.
         </div>
       )}
-      
+
       {!isSignedUp && (
         <form onSubmit={handleSignup} className="signup-form">
           <div className="form-group">
             <label htmlFor="firstName">First Name</label>
-            <input 
-              type="text" 
-              id="firstName" 
-              name="firstName" 
-              value={formData.firstName} 
-              onChange={handleChange} 
-              required 
+            <input
+              type="text"
+              id="firstName"
+              name="firstName"
+              value={formData.firstName}
+              onChange={handleChange}
+              required
               placeholder="Enter your first name"
             />
           </div>
 
           <div className="form-group">
             <label htmlFor="lastName">Last Name</label>
-            <input 
-              type="text" 
-              id="lastName" 
-              name="lastName" 
-              value={formData.lastName} 
-              onChange={handleChange} 
-              required 
+            <input
+              type="text"
+              id="lastName"
+              name="lastName"
+              value={formData.lastName}
+              onChange={handleChange}
+              required
               placeholder="Enter your last name"
             />
           </div>
 
           <div className="form-group">
             <label htmlFor="email">Email</label>
-            <input 
-              type="email" 
-              id="email" 
-              name="email" 
-              value={formData.email} 
-              onChange={handleChange} 
-              required 
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
               placeholder="Enter your email"
             />
           </div>
 
           <div className="form-group">
             <label htmlFor="password">Password</label>
-            <input 
-              type="password" 
-              id="password" 
-              name="password" 
-              value={formData.password} 
-              onChange={handleChange} 
-              required 
-              minLength="6" 
+            <input
+              type="password"
+              id="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              minLength="6"
               placeholder="Enter your password"
             />
             <small>Password must be at least 6 characters</small>
@@ -269,26 +314,30 @@ const SignupForm = () => {
 
           <div className="form-group">
             <label htmlFor="confirmPassword">Confirm Password</label>
-            <input 
-              type="password" 
-              id="confirmPassword" 
-              name="confirmPassword" 
-              value={formData.confirmPassword} 
-              onChange={handleChange} 
-              required 
+            <input
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              required
               placeholder="Confirm your password"
             />
           </div>
 
-          <button type="submit" className="signup-button" disabled={loading || isSignedUp}>
-            {loading ? 'Creating Account...' : 'Sign Up'}
+          <button
+            type="submit"
+            className="signup-button"
+            disabled={loading || isSignedUp}
+          >
+            {loading ? "Creating Account..." : "Sign Up"}
           </button>
         </form>
       )}
-      <button 
-        onClick={() => navigate('/login')} 
+      <button
+        onClick={() => navigate("/login")}
         className="secondary-button"
-        style={{ marginTop: '1rem' }} /* Use rem for scalability */
+        style={{ marginTop: "1rem" }} /* Use rem for scalability */
       >
         Aldready signed up? Click here to login up
       </button>
