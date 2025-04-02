@@ -7,7 +7,6 @@
  Sheth, Jeet ( 1002175315 ) 
 */
 
-
 import React, { useState, useEffect } from 'react';
 import { getAuth, signInWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import { useNavigate, Link } from 'react-router-dom';
@@ -17,7 +16,7 @@ import '../styles/signup.css';
 const LoginForm = () => {
   const [formData, setFormData] = useState({
     email: '',
-    password: ''
+    password: '',
   });
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -27,7 +26,7 @@ const LoginForm = () => {
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -51,40 +50,46 @@ const LoginForm = () => {
 
       // If email is verified, store login in MySQL database through API
       try {
-        const apiResponse = await fetch("http://localhost:3000/api/login", {
-          method: "POST",
+        const loginTimestamp = new Date().toISOString();
+        
+        const apiResponse = await fetch('http://localhost:3000/api/login', {
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify({
             email: formData.email,
             password: user.uid, // Using Firebase UID as the password
+            loginTimestamp: loginTimestamp
           }),
         });
 
         if (!apiResponse.ok) {
           const errorData = await apiResponse.json();
-          console.error("MySQL database login verification failed:", errorData);
+          console.error('MySQL database login verification failed:', errorData);
           // Don't fail the whole login if MySQL verification fails
           // Just log it and continue
         } else {
           const userData = await apiResponse.json();
-          console.log("User data from MySQL:", userData);
-          
+          console.log('User data from MySQL:', userData);
+
           // Update the last login time in MySQL
-          await fetch("http://localhost:3000/api/login", {
-            method: "PUT",
+          const updateResponse = await fetch('http://localhost:3000/api/login', {
+            method: 'PUT',
             headers: {
-              "Content-Type": "application/json",
+              'Content-Type': 'application/json',
             },
             body: JSON.stringify({
               email: formData.email,
-              lastLogin: new Date().toISOString(),
+              last_login: loginTimestamp
             }),
           });
+
+          const updateData = await updateResponse.json();
+          console.log('Last login update response:', updateData);
         }
       } catch (mysqlError) {
-        console.error("Error verifying with MySQL:", mysqlError);
+        console.error('Error verifying with MySQL:', mysqlError);
         // Continue with login even if MySQL verification fails
       }
 
@@ -92,7 +97,6 @@ const LoginForm = () => {
       setEmailVerified(true);
       toast.success('Logged in successfully! Redirecting to dashboard...');
       navigate('/dashboard');
-
     } catch (err) {
       let errorMessage = 'Failed to sign in';
 
@@ -108,7 +112,7 @@ const LoginForm = () => {
 
       setError(errorMessage);
       toast.error(errorMessage);
-      console.error("Login error:", err);
+      console.error('Login error:', err);
     } finally {
       setLoading(false);
     }
@@ -130,9 +134,9 @@ const LoginForm = () => {
   return (
     <div className="signup-container">
       <h2>Log In</h2>
-      
+
       {error && <div className="error-message">{error}</div>}
-      
+
       <form onSubmit={handleLogin} className="signup-form">
         <div className="form-group">
           <label htmlFor="email">Email</label>
@@ -160,12 +164,12 @@ const LoginForm = () => {
           />
           {/* Add forgot password link */}
           <div style={{ textAlign: 'right', marginTop: '0.5rem' }}>
-            <Link 
-              to="/forgot-password" 
-              style={{ 
-                color: '#007bff', 
-                textDecoration: 'none', 
-                fontSize: '0.875rem' 
+            <Link
+              to="/forgot-password"
+              style={{
+                color: '#007bff',
+                textDecoration: 'none',
+                fontSize: '0.875rem',
               }}
             >
               Forgot Password?
@@ -179,8 +183,8 @@ const LoginForm = () => {
       </form>
 
       {/* Add Sign Up button/link at the bottom with responsive styling */}
-      <button 
-        onClick={() => navigate('/signup')} 
+      <button
+        onClick={() => navigate('/signup')}
         className="secondary-button"
         style={{ marginTop: '1rem' }}
       >
@@ -191,7 +195,6 @@ const LoginForm = () => {
 };
 
 export default LoginForm;
-
 // import React, { useState, useEffect } from 'react';
 // import { getAuth, signInWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 // import { useNavigate, Link } from 'react-router-dom';
