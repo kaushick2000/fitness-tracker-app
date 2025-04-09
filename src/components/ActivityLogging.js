@@ -860,7 +860,7 @@ const ActivityLogging = () => {
           </div>
         )}
 
-        <div className="data-sync-controls">
+        {/* <div className="data-sync-controls">
           <h3>Data Synchronization</h3>
           <div className="sync-buttons">
             <button onClick={handleExportData} className="export-button">
@@ -876,7 +876,7 @@ const ActivityLogging = () => {
               />
             </label>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

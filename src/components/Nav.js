@@ -30,6 +30,7 @@ const Nav = ({ purchasedPlans = [] }) => {
     if (path.includes("contact")) return "contact";
     if (path.includes("trainer")) return "trainer";
     if (path.includes("nutrition")) return "nutrition";
+    if (path.includes("aichat")) return "aichat";
     return "dashboard"; // Default
   });
 
@@ -51,6 +52,7 @@ const Nav = ({ purchasedPlans = [] }) => {
     else if (path.includes("contact")) setActiveNavItem("contact");
     else if (path.includes("trainer")) setActiveNavItem("trainer");
     else if (path.includes("nutrition")) setActiveNavItem("nutrition");
+    else if (path.includes("aichat")) setActiveNavItem("aichat"); 
     else setActiveNavItem("dashboard");
   }, [location.pathname]);
 
@@ -103,6 +105,9 @@ const Nav = ({ purchasedPlans = [] }) => {
         break;
       case "nutrition":
         navigate("/nutrition");
+        break;
+      case "aichat":
+        navigate("/aichat");
         break;
       default:
         navigate("/dashboard");
@@ -202,7 +207,15 @@ const Nav = ({ purchasedPlans = [] }) => {
             <span className="nav-icon">✉️</span>
             <span>Contact</span>
           </a>
-
+          <a
+            className={`nav-item ${
+              activeNavItem === "aichat" ? "active" : ""
+            }`}
+            onClick={() => handleNavigation("aichat")}
+          >
+            <span className="nav-icon">💬</span>
+            <span>AI Chat</span>
+          </a>
           {hasActivePlan && (
             <a
               className={`nav-item ${

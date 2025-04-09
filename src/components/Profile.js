@@ -10,8 +10,7 @@ import React, { useState, useEffect } from "react";
 import Nav from "./Nav";
 import "../styles/Profile.css";
 import ProfilePic from "../assets/profilepic.jpg";
-
-const Profile = ({ userData }) => {
+const Profile = () => {
   const defaultUser = {
     personalInfo: {
       firstName: "Alex",
@@ -59,8 +58,8 @@ const Profile = ({ userData }) => {
       favoriteExercise: "Squats",
     },
   };
-
-  const user = userData || defaultUser;
+  const userData = {};
+  const user = defaultUser || userData;
 
   // State setup with safe defaults
   const [editMode, setEditMode] = useState(false);

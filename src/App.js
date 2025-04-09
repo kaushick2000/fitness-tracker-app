@@ -9,10 +9,10 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
-import './components/firebase'; // Import Firebase initialization
-import SignupForm from './components/signup';
-import LoginForm from './components/login';
-import Dashboard from './components/dashboard';
+import './components/Firebase'; // Import Firebase initialization
+import SignupForm from './components/Signup';
+import LoginForm from './components/Login';
+import Dashboard from './components/Dashboard';
 import ActivityLogging from './components/ActivityLogging';
 import HomePage from './components/HomePage'; // Import the new HomePage component
 import { ToastContainer } from 'react-toastify';
@@ -29,6 +29,7 @@ import ContactUs from './components/ContactUs';
 import Trainer from './components/Trainer';
 import Nutrition from './components/Nutrition';
 import ForgotPassword from './components/ForgotPassword';
+import AIChat from './components/AIChat';
 function App() {
   return (
     <Router>
@@ -48,6 +49,7 @@ function App() {
           <Route path='/contact' element={<ContactUs/>}/>
           <Route path='/trainer' element={<Trainer/>}/>
           <Route path='/nutrition' element={<Nutrition/>}/>
+          <Route path='/aichat' element={<AIChat/>}/>
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/" element={<Navigate to="/home" replace />} />
         </Routes>

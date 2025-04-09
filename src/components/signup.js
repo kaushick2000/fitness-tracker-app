@@ -31,6 +31,8 @@ const SignupForm = () => {
   const [loading, setLoading] = useState(false);
   const [emailVerified, setEmailVerified] = useState(false);
   const [isSignedUp, setIsSignedUp] = useState(false); // Track if signup is complete
+  const [sqlStored, setSqlStored] = useState(false); // Track if MySQL storage is complete
+  const [profileData, setProfileData] = useState(null); // Store profile data for display
 
   const handleChange = (e) => {
     setFormData({
@@ -104,7 +106,7 @@ const SignupForm = () => {
         createdAt: new Date().toISOString(),
       });
 
-      // ADDED CODE: Store user data in MySQL database through API
+      // Store user data in MySQL database through API with profile and related records
       try {
         const apiResponse = await fetch("http://localhost:3000/api/users", {
           method: "POST",
@@ -115,19 +117,23 @@ const SignupForm = () => {
             firstName,
             lastName,
             email,
-            password, // Store Firebase UID as password for reference
+            password: user.uid, // Store Firebase UID as password for reference
             id: user.uid,
             createdAt: new Date().toISOString(),
           }),
+          credentials: 'include',
         });
 
         if (!apiResponse.ok) {
           const errorData = await apiResponse.json();
           console.error("MySQL database storage failed:", errorData);
-          // Don't fail the whole signup if MySQL storage fails
-          // Just log it and continue
+          // Continue with signup even if MySQL storage fails
         } else {
-          console.log("SQL database stored user!");
+          const userData = await apiResponse.json();
+          console.log("SQL database stored user with profile and related data:", userData);
+          setSqlStored(true);
+          setProfileData(userData.profile);
+          toast.success("Account created successfully with default profile!");
         }
       } catch (mysqlError) {
         console.error("Error saving to MySQL:", mysqlError);
@@ -205,7 +211,7 @@ const SignupForm = () => {
       }
     });
 
-    // Start polling every 5 seconds if signup is complete but email isn’t verified
+    // Start polling every 5 seconds if signup is complete but email isn't verified
     if (isSignedUp && !emailVerified) {
       let pollCount = 0;
       const maxPolls = 60; // Poll for up to 5 minutes (60 * 5 seconds)
@@ -253,6 +259,20 @@ const SignupForm = () => {
       {isSignedUp && !emailVerified && !error && (
         <div className="success-message">
           Please check your email to verify your account.
+          {sqlStored && (
+            <div>
+              <p>Your profile has been created with default settings:</p>
+              {profileData && (
+                <ul>
+                  <li>Height: {profileData.curr_height} cm</li>
+                  <li>Weight: {profileData.curr_weight} kg</li>
+                  <li>Default nutrition sample added</li>
+                  <li>Initial progress record created</li>
+                </ul>
+              )}
+              <p>You can update these values after logging in.</p>
+            </div>
+          )}
         </div>
       )}
 
@@ -339,7 +359,7 @@ const SignupForm = () => {
         className="secondary-button"
         style={{ marginTop: "1rem" }} /* Use rem for scalability */
       >
-        Aldready signed up? Click here to login up
+        Already signed up? Click here to login
       </button>
     </div>
   );
