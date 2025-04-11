@@ -107,6 +107,176 @@ const ActivityLogging = () => {
   const [showRecommendations, setShowRecommendations] = useState(false);
   const [planWorkoutsAdded, setPlanWorkoutsAdded] = useState(false);
 
+  // Function to fetch workout history from the API
+  const fetchWorkoutHistory = async (userId) => {
+    try {
+      const response = await fetch(`/api/activity?userId=${userId}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch workout history");
+      }
+      const data = await response.json();
+
+      // Transform the data to match the component's expected format
+      const formattedHistory = {};
+
+      // Process workouts from the database
+      data.workouts.forEach((workout) => {
+        const date = new Date(workout.workout_date).toISOString().split("T")[0];
+
+        if (!formattedHistory[date]) {
+          formattedHistory[date] = [];
+        }
+
+        formattedHistory[date].push({
+          id: workout.workout_id,
+          title: workout.exercise.title,
+          bodyPart: workout.exercise.body_part,
+          duration: workout.duration,
+          calories: Math.round(workout.duration * 5), // Simple calorie estimation
+          reps: 12, // Default value if not stored
+          date: date,
+          type: workout.exercise.type,
+          level: workout.exercise.level,
+          description: workout.exercise.description,
+          youtube_video: workout.exercise.youtube_video,
+        });
+      });
+
+      return formattedHistory;
+    } catch (error) {
+      console.error("Error fetching workout history:", error);
+      return {};
+    }
+  };
+
+  // Function to save workout to the API
+  const saveWorkoutToAPI = async (userId, workoutPlan, stepsData, minutesData) => {
+    try {
+      console.log("Sending request to API with data:", {
+        userId, workoutPlan, steps: stepsData, activeMinutes: minutesData
+      });
+      
+      const response = await fetch("http://localhost:3000/api/activity", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId,
+          workoutPlan,
+          steps: stepsData,
+          activeMinutes: minutesData,
+        }),
+      });
+      
+      console.log("Response status:", response.status);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Error response:", errorText);
+        throw new Error(`Failed to save workout: ${errorText}`);
+      }
+  
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error saving workout:", error);
+      throw error;
+    }
+  };
+
+  // Function to fetch user profile data
+  const fetchUserProfile = async (userId) => {
+    try {
+      const response = await fetch(`/api/profile?userId=${userId}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch user profile");
+      }
+
+      const data = await response.json();
+
+      // Transform the data to match the component's expected format
+      const purchasedPlans = data.profile.purchase_plans
+        ? JSON.parse(data.profile.purchase_plans)
+        : [];
+
+      let activePlan = {};
+      try {
+        activePlan = data.profile.active_plan
+          ? JSON.parse(data.profile.active_plan)
+          : {};
+      } catch (e) {
+        activePlan = {};
+      }
+
+      return {
+        name: data.profile.user ? data.profile.user.name : "User",
+        age: 30, // Default if not stored
+        weight: data.profile.curr_weight || 70,
+        height: data.profile.curr_height || 175,
+        fitnessGoals: activePlan.fitnessGoals || "Build muscle",
+        weeklyTarget: activePlan.weeklyTarget || {
+          workouts: 4,
+          steps: 70000,
+          activeMinutes: 150,
+        },
+        purchasedPlans,
+      };
+    } catch (error) {
+      console.error("Error fetching user profile:", error);
+      return null;
+    }
+  };
+
+  // Function to update user profile data
+  const updateUserProfile = async (userId, profileData) => {
+    try {
+      const response = await fetch("/api/profile", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId,
+          ...profileData,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update user profile");
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error updating user profile:", error);
+      throw error;
+    }
+  };
+
+  // Update your existing handleSaveWorkout function
+  const handleSaveWorkout = async () => {
+    try {
+      // Assume userId is stored in context or localStorage
+      const userId = localStorage.getItem("userId") || 1; // Default to 1 for testing
+
+      // Save the workout to the API
+      await saveWorkoutToAPI(userId, workoutPlan, stepsCount, activeMinutes);
+
+      // Update local state
+      const updatedHistory = { ...workoutHistory };
+      updatedHistory[selectedDate] = [...workoutPlan];
+      setWorkoutHistory(updatedHistory);
+
+      // Reset steps and active minutes after saving
+      setStepsCount(0);
+      setActiveMinutes(0);
+
+      alert("Workout saved successfully!");
+    } catch (error) {
+      alert("Error saving workout. Please try again.");
+    }
+  };
   // Function to add workouts based on purchased plan level
   const addPlanBasedWorkouts = () => {
     if (planWorkoutsAdded || workoutPlan.length > 0) {
@@ -115,39 +285,47 @@ const ActivityLogging = () => {
 
     // Get all exercises from all body parts
     const allExercises = [];
-    Object.entries(exerciseData.exercises_by_body_part).forEach(([bodyPart, exercises]) => {
-      exercises.forEach(exercise => {
-        allExercises.push({ ...exercise, bodyPart });
-      });
-    });
+    Object.entries(exerciseData.exercises_by_body_part).forEach(
+      ([bodyPart, exercises]) => {
+        exercises.forEach((exercise) => {
+          allExercises.push({ ...exercise, bodyPart });
+        });
+      }
+    );
 
     // Check if user has a purchased plan
     if (purchasedPlans && purchasedPlans.length > 0) {
       const planLevel = purchasedPlans[0].toLowerCase(); // Get the first plan level
-      
+
       // Filter exercises based on plan level
       let levelExercises = [];
-      
+
       if (planLevel === "beginner") {
-        levelExercises = allExercises.filter(ex => ex.level.toLowerCase() === "beginner");
+        levelExercises = allExercises.filter(
+          (ex) => ex.level.toLowerCase() === "beginner"
+        );
       } else if (planLevel === "intermediate") {
-        levelExercises = allExercises.filter(ex => ex.level.toLowerCase() === "intermediate");
+        levelExercises = allExercises.filter(
+          (ex) => ex.level.toLowerCase() === "intermediate"
+        );
       } else if (planLevel === "advanced") {
-        levelExercises = allExercises.filter(ex => ex.level.toLowerCase() === "advanced");
+        levelExercises = allExercises.filter(
+          (ex) => ex.level.toLowerCase() === "advanced"
+        );
       }
-      
+
       // If no exercises found for the level, use all exercises
       if (levelExercises.length === 0) {
         levelExercises = allExercises;
       }
-      
+
       // Shuffle the exercises and pick 5 random ones
       const shuffled = levelExercises.sort(() => 0.5 - Math.random());
       const selected = shuffled.slice(0, 5);
-      
+
       // Add each exercise to the workout plan
       const newWorkoutPlan = [];
-      selected.forEach(exercise => {
+      selected.forEach((exercise) => {
         // Calculate calories for the exercise
         const intensityFactors = {
           Strength: 0.08,
@@ -159,7 +337,7 @@ const ActivityLogging = () => {
         const userWeight = userProfile.weight;
         const duration = 15;
         const calories = Math.round(userWeight * intensityFactor * duration);
-        
+
         const newExercise = {
           ...exercise,
           id: Date.now() + Math.random(), // Ensure unique IDs
@@ -168,15 +346,17 @@ const ActivityLogging = () => {
           reps: 12,
           date: selectedDate,
         };
-        
+
         newWorkoutPlan.push(newExercise);
       });
-      
+
       // Set the workout plan with these exercises
       setWorkoutPlan(newWorkoutPlan);
       setPlanWorkoutsAdded(true);
-      
-      console.log(`Added ${selected.length} ${planLevel} level exercises to workout plan`);
+
+      console.log(
+        `Added ${selected.length} ${planLevel} level exercises to workout plan`
+      );
     }
   };
 
@@ -345,13 +525,13 @@ const ActivityLogging = () => {
       .scrollIntoView({ behavior: "smooth" });
   };
 
-  const handleSaveWorkout = () => {
-    const updatedHistory = { ...workoutHistory };
-    updatedHistory[selectedDate] = [...workoutPlan];
+  // const handleSaveWorkout = () => {
+  //   const updatedHistory = { ...workoutHistory };
+  //   updatedHistory[selectedDate] = [...workoutPlan];
 
-    setWorkoutHistory(updatedHistory);
-    alert("Workout saved successfully!");
-  };
+  //   setWorkoutHistory(updatedHistory);
+  //   alert("Workout saved successfully!");
+  // };
 
   const handleDateChange = (e) => {
     const newDate = e.target.value;
@@ -497,7 +677,12 @@ const ActivityLogging = () => {
 
   // Add plan-based workouts when exercise data is loaded and plan is available
   useEffect(() => {
-    if (exerciseData && purchasedPlans.length > 0 && !planWorkoutsAdded && workoutPlan.length === 0) {
+    if (
+      exerciseData &&
+      purchasedPlans.length > 0 &&
+      !planWorkoutsAdded &&
+      workoutPlan.length === 0
+    ) {
       addPlanBasedWorkouts();
     }
   }, [exerciseData, purchasedPlans, planWorkoutsAdded, workoutPlan]);
@@ -522,13 +707,42 @@ const ActivityLogging = () => {
     localStorage.setItem("purchasedPlans", JSON.stringify(purchasedPlans));
   }, [purchasedPlans]);
 
+  useEffect(() => {
+    const loadUserData = async () => {
+      // Assume userId is stored in context or localStorage
+      const userId = localStorage.getItem("userId") || 1; // Default to 1 for testing
+
+      // Fetch user profile
+      const profile = await fetchUserProfile(userId);
+      if (profile) {
+        setUserProfile(profile);
+        setPurchasedPlans(profile.purchasedPlans || []);
+      }
+
+      // Fetch workout history
+      const history = await fetchWorkoutHistory(userId);
+      if (Object.keys(history).length > 0) {
+        setWorkoutHistory(history);
+      }
+
+      // Load workout for today if it exists
+      const today = new Date().toISOString().split("T")[0];
+      if (history[today]) {
+        setWorkoutPlan([...history[today]]);
+        setPlanWorkoutsAdded(true);
+      }
+    };
+
+    loadUserData();
+  }, []);
+
   const bodyParts = Object.keys(exerciseData.exercises_by_body_part);
   const recommendedExercises = getRecommendedExercises();
 
   return (
     <div className="app-container">
       <div className="nav-wrapper">
-        <Nav purchasedPlans={purchasedPlans}/>
+        <Nav purchasedPlans={purchasedPlans} />
       </div>
       <div className="fitness-tracker">
         <div className="header">

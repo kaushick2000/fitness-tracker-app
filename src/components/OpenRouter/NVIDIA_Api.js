@@ -1,6 +1,6 @@
 // OpenRouter/NVIDIA_API.js
 
-const API_KEY = "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";
+const API_KEY = "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";
 const MODEL = "nvidia/llama-3.1-nemotron-nano-8b-v1:free";
 const API_URL = "https://openrouter.ai/api/v1/chat/completions";
 

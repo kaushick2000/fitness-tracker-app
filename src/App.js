@@ -10,7 +10,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
 import './components/Firebase'; // Import Firebase initialization
-import SignupForm from './components/Signup';
+import SignupForm from './components/signup';
 import LoginForm from './components/Login';
 import Dashboard from './components/Dashboard';
 import ActivityLogging from './components/ActivityLogging';
