@@ -9,7 +9,7 @@
 * {
   box-sizing: border-box;
   margin: 0;
-  padding: 0;
+  padding: 0; 
 }
 
 body {
@@ -31,6 +31,7 @@ body {
   margin: 80px auto 0; /* Space for fixed navbar */
   padding: 2rem;
   flex: 1;
+  margin-top:-20px;
 }
 
 /* Typography */

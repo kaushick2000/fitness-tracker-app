@@ -1,14 +1,7 @@
-/* Last Name, First Name - Student ID */
-/* 
- Suresh, Kaushick ( 1002237680 ), 
- Sivaprakash, Akshay Prassanna ( 1002198274 ) ,  
- Sonwane, Pratik ( 1002170610 ) , 
- Shaik, Arfan ( 1002260039 ) , 
- Sheth, Jeet ( 1002175315 ) 
-*/
 import React, { useState, useEffect } from 'react';
 import '../styles/contactus.css';
 import Nav from './Nav';
+import emailjs from '@emailjs/browser';
 
 const ContactUs = () => {
   const [formData, setFormData] = useState({
@@ -18,8 +11,9 @@ const ContactUs = () => {
     email: '',
     phone: ''
   });
-
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const [purchasedPlans, setPurchasedPlans] = useState(() => {
     const savedPlans = localStorage.getItem('purchasedPlans');
     return savedPlans ? JSON.parse(savedPlans) : [];
@@ -28,6 +22,7 @@ const ContactUs = () => {
   useEffect(() => {
     localStorage.setItem('purchasedPlans', JSON.stringify(purchasedPlans));
   }, [purchasedPlans]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prevState => ({
@@ -38,16 +33,63 @@ const ContactUs = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    setSubmitted(true);
-    // Reset form after submission
-    setFormData({
-      subject: '',
-      message: '',
-      name: '',
-      email: '',
-      phone: ''
+    setLoading(true);
+    setError('');
+
+    // Prepare template parameters manually to ensure all data is included
+    const templateParams = {
+      from_name: formData.name,
+      from_email: formData.email,
+      phone_number: formData.phone || 'Not provided',
+      subject: formData.subject,
+      message: formData.message,
+      to_email: 'attendanceproject1411@gmail.com',
+      reply_to: formData.email
+    };
+
+    // Send email with manually created template parameters
+    emailjs.send(
+      'service_t0ikfke',       // Your EmailJS service ID
+      'template_egarc9t',      // Your EmailJS template ID
+      templateParams,          // Template parameters
+      'ANY0bxTRDfxlzfn8s'        // Your EmailJS public key
+    )
+    .then((result) => {
+      console.log('Email sent successfully:', result.text);
+      setSubmitted(true);
+      // Reset form after submission
+      setFormData({
+        subject: '',
+        message: '',
+        name: '',
+        email: '',
+        phone: ''
+      });
+    })
+    .catch((error) => {
+      console.error('Failed to send email:', error);
+      setError('Failed to send your message. Please try again later.');
+    })
+    .finally(() => {
+      setLoading(false);
     });
+  };
+
+  // Map with the provided coordinates
+  const renderMap = () => {
+    const mapUrl = `https://maps.google.com/maps?q=${32.7310},${-97.1150}&z=14&output=embed`;
+    return (
+      <iframe 
+        src={mapUrl} 
+        width="100%" 
+        height="300" 
+        style={{ border: 0, borderRadius: '8px' }} 
+        allowFullScreen="" 
+        loading="lazy" 
+        referrerPolicy="no-referrer-when-downgrade"
+        title="Google Map"
+      ></iframe>
+    );
   };
 
   return (
@@ -127,19 +169,27 @@ const ContactUs = () => {
                   ></textarea>
                 </div>
                 
-                <button type="submit" className="submit-btn">Send Message</button>
+                {error && <div className="error-message">{error}</div>}
+                
+                <button 
+                  type="submit" 
+                  className="submit-btn" 
+                  disabled={loading}
+                >
+                  {loading ? 'Sending...' : 'Send Message'}
+                </button>
               </form>
             )}
           </div>
           
-          <div className="contact-info-section">
+          {/* <div className="contact-info-section">
             <div className="contact-info">
               <h2>Contact Information</h2>
               <div className="info-item">
                 <span className="icon">📧</span>
                 <div>
                   <h3>Email</h3>
-                  <p><a href="mailto:info@conference.com">info@conference.com</a></p>
+                  <p><a href="mailto:attendanceproject1411@gmail.com">attendanceproject1411@gmail.com</a></p>
                 </div>
               </div>
               
@@ -160,27 +210,24 @@ const ContactUs = () => {
                 </div>
               </div>
             </div>
-            
+             */}
             <div className="location-section">
               <h2>Conference Location</h2>
               <div className="map-container">
-                {/* This would be replaced with an actual map component like Google Maps */}
-                <div className="map-placeholder">
-                  <div className="map-pin"></div>
-                </div>
+                {renderMap()}
               </div>
               <div className="address">
                 <h3>Address</h3>
                 <p>Conference Center</p>
                 <p>123 Main Street</p>
-                <p>Anytown, ST 12345</p>
+                <p>Arlington, TX 76011</p>
                 <p>United States</p>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    // </div>
   );
 };
 

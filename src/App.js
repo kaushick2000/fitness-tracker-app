@@ -30,6 +30,8 @@ import Trainer from './components/Trainer';
 import Nutrition from './components/Nutrition';
 import ForgotPassword from './components/ForgotPassword';
 import AIChat from './components/AIChat';
+import Chat from './components/Chat';
+
 function App() {
   return (
     <Router>
@@ -44,6 +46,7 @@ function App() {
           <Route path="/analytics" element={<AnalyticsDashboard/>} />
           <Route path="/home" element={<HomePage />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/chat" element={<Chat />} />
           <Route path="/home" element={<HomePage />} /> 
           <Route path="/plans" element={<SubscriptionPayment/>} /> 
           <Route path='/contact' element={<ContactUs/>}/>
@@ -51,6 +54,7 @@ function App() {
           <Route path='/nutrition' element={<Nutrition/>}/>
           <Route path='/aichat' element={<AIChat/>}/>
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/chat" element={<Chat />} />
           <Route path="/" element={<Navigate to="/home" replace />} />
         </Routes>
       </div>
