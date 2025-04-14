@@ -72,6 +72,7 @@ const LoginForm = () => {
         } else {
           const userData = await apiResponse.json();
           console.log('User data from MySQL:', userData);
+          localStorage.setItem('userId', JSON.stringify(userData.user.user_id));
 
           // Update the last login time in MySQL
           const updateResponse = await fetch('http://localhost:3000/api/login', {

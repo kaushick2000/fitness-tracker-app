@@ -106,11 +106,258 @@ const ActivityLogging = () => {
   });
   const [showRecommendations, setShowRecommendations] = useState(false);
   const [planWorkoutsAdded, setPlanWorkoutsAdded] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMoreExercises, setHasMoreExercises] = useState(true);
+  const [exercisesPerPage] = useState(20);
+
+  // Function to fetch exercises from the database
+  const ExercisesList = () => {
+    // Existing component code can remain the same
+    // This focuses on the rendering part of the exercises
+
+    return (
+      <div className="exercise-list-container">
+        <div className="exercise-header">Exercises</div>
+
+        {isLoading && (
+          <div className="loading-container">
+            <div className="loading-spinner"></div>
+            <p>Loading exercises...</p>
+          </div>
+        )}
+
+        {!isLoading && Object.keys(filteredExercises()).length === 0 && (
+          <div className="no-exercises">
+            <p>No exercises found. Try changing your search criteria.</p>
+          </div>
+        )}
+
+        {!isLoading &&
+          Object.entries(filteredExercises()).map(([bodyPart, exercises]) => (
+            <div key={bodyPart} className="exercise-category">
+              <h3 className="body-part-title">{bodyPart}</h3>
+              <div className="exercise-items ">
+                {exercises.map((exercise) => (
+                  <div
+                    key={exercise.exercise_id || exercise.title}
+                    className="exercise-item "
+                  >
+                    <div className="exercise-title">{exercise.title}</div>
+                      <div className="exercise-details">
+                        {exercise.equipment && (
+                          <span className="equipment">
+                            {exercise.equipment}
+                          </span>
+                        )}
+                        {exercise.rating > 0 && (
+                          <span className="rating">
+                            <span className="stars">
+                              {"★".repeat(Math.round(exercise.rating / 2))}
+                            </span>
+                            <span className="rating-value">
+                              ({exercise.rating})
+                            </span>
+                          </span>
+                        )}
+                      </div>
+                      {exercise.description && (
+                        <div className="exercise-description">
+                          {exercise.description}
+                        </div>
+                      )}
+                      {exercise.youtube_video && (
+                        <a
+                          href={exercise.youtube_video}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="video-link"
+                        >
+                          Watch Video Tutorial
+                        </a>
+                      )}
+                    <div className="exercise-info ">
+                      
+                    </div>
+
+                    <div className="exercise-type-level">
+                      <div className="exercise-type">
+                        <span
+                          className={`type-badge ${exercise.type.toLowerCase()}`}
+                        >
+                          {exercise.type}
+                        </span>
+                      </div>
+                      <div className="exercise-level">
+                        <span
+                          className={`level-badge ${exercise.level.toLowerCase()}`}
+                        >
+                          {exercise.level}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="exercise-action">
+                      <button
+                        onClick={() => handleAddExercise(exercise, bodyPart)}
+                        className={`add-button ${
+                          editingExercise && editingExercise.id === exercise.id
+                            ? "editing"
+                            : ""
+                        }`}
+                      >
+                        {editingExercise && editingExercise.id === exercise.id
+                          ? "Update"
+                          : "+"}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+
+        {!isLoading &&
+          Object.keys(filteredExercises()).length > 0 &&
+          hasMoreExercises && (
+            <div className="load-more-container">
+              <button
+                onClick={loadMoreExercises}
+                className="load-more-button"
+                disabled={isLoading}
+              >
+                {isLoading ? "Loading..." : "Load More Exercises"}
+              </button>
+            </div>
+          )}
+      </div>
+    );
+  };
+  // Replace the fetchExercises function with this improved version
+  const fetchExercises = async (page = 1, reset = false) => {
+    try {
+      setIsLoading(true);
+
+      // Build query parameters
+      const queryParams = new URLSearchParams({
+        page,
+        limit: exercisesPerPage,
+      });
+
+      if (selectedBodyPart && selectedBodyPart !== "") {
+        queryParams.append("bodyPart", selectedBodyPart);
+      }
+
+      if (searchQuery && searchQuery !== "") {
+        queryParams.append("search", searchQuery);
+      }
+
+      const response = await fetch(
+        `http://localhost:3000/api/exercises?${queryParams}`
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch exercises");
+      }
+
+      const data = await response.json();
+      console.log("API Response:", data); // Add this for debugging
+
+      // Transform data to match component's expected format
+      const exercisesByBodyPart = {};
+
+      // Make sure we're accessing the correct property in the response
+      const exercises = data.exercises || [];
+
+      // Group exercises by body part
+      exercises.forEach((exercise) => {
+        const bodyPart = exercise.body_part || "Other";
+
+        if (!exercisesByBodyPart[bodyPart]) {
+          exercisesByBodyPart[bodyPart] = [];
+        }
+
+        exercisesByBodyPart[bodyPart].push({
+          title: exercise.title,
+          description: exercise.description || "",
+          type: exercise.type || "Strength",
+          equipment: exercise.equipment || "None",
+          level: exercise.level || "Beginner",
+          rating: exercise.rating || 0,
+          youtube_video: exercise.youtube_video || "",
+          exercise_id: exercise.exercise_id,
+        });
+      });
+
+      // Update pagination state
+      setCurrentPage(page);
+      setHasMoreExercises(
+        data.pagination ? page < data.pagination.pages : false
+      );
+
+      // Create the new state object
+      const newData = { exercises_by_body_part: exercisesByBodyPart };
+
+      console.log("Transformed data:", newData); // Add this for debugging
+
+      // If reset is true, replace data; otherwise, merge with existing data
+      if (reset) {
+        setExerciseData(newData); // Directly update state here
+        return newData;
+      } else {
+        // Merge new exercises with existing ones
+        const mergedData = {
+          exercises_by_body_part: {
+            ...exerciseData.exercises_by_body_part,
+          },
+        };
+
+        Object.keys(exercisesByBodyPart).forEach((bodyPart) => {
+          if (mergedData.exercises_by_body_part[bodyPart]) {
+            // Filter out duplicates based on exercise_id
+            const existingIds = new Set(
+              mergedData.exercises_by_body_part[bodyPart].map(
+                (ex) => ex.exercise_id
+              )
+            );
+            const newExercises = exercisesByBodyPart[bodyPart].filter(
+              (ex) => !existingIds.has(ex.exercise_id)
+            );
+            mergedData.exercises_by_body_part[bodyPart] = [
+              ...mergedData.exercises_by_body_part[bodyPart],
+              ...newExercises,
+            ];
+          } else {
+            mergedData.exercises_by_body_part[bodyPart] =
+              exercisesByBodyPart[bodyPart];
+          }
+        });
+
+        setExerciseData(mergedData); // Directly update state here
+        return mergedData;
+      }
+    } catch (error) {
+      console.error("Error fetching exercises:", error);
+      return reset ? initialExerciseData : exerciseData;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Add a loadMoreExercises function
+  const loadMoreExercises = async () => {
+    if (!isLoading && hasMoreExercises) {
+      const newData = await fetchExercises(currentPage + 1);
+      // No need to set state here as fetchExercises already does it
+    }
+  };
 
   // Function to fetch workout history from the API
   const fetchWorkoutHistory = async (userId) => {
     try {
-      const response = await fetch(`/api/activity?userId=${userId}`);
+      const response = await fetch(
+        `http://localhost:3000/api/activity?userId=${userId}`
+      );
       if (!response.ok) {
         throw new Error("Failed to fetch workout history");
       }
@@ -150,12 +397,20 @@ const ActivityLogging = () => {
   };
 
   // Function to save workout to the API
-  const saveWorkoutToAPI = async (userId, workoutPlan, stepsData, minutesData) => {
+  const saveWorkoutToAPI = async (
+    userId,
+    workoutPlan,
+    stepsData,
+    minutesData
+  ) => {
     try {
       console.log("Sending request to API with data:", {
-        userId, workoutPlan, steps: stepsData, activeMinutes: minutesData
+        userId,
+        workoutPlan,
+        steps: stepsData,
+        activeMinutes: minutesData,
       });
-      
+
       const response = await fetch("http://localhost:3000/api/activity", {
         method: "POST",
         headers: {
@@ -168,15 +423,15 @@ const ActivityLogging = () => {
           activeMinutes: minutesData,
         }),
       });
-      
+
       console.log("Response status:", response.status);
-      
+
       if (!response.ok) {
         const errorText = await response.text();
         console.error("Error response:", errorText);
         throw new Error(`Failed to save workout: ${errorText}`);
       }
-  
+
       const data = await response.json();
       return data;
     } catch (error) {
@@ -188,7 +443,9 @@ const ActivityLogging = () => {
   // Function to fetch user profile data
   const fetchUserProfile = async (userId) => {
     try {
-      const response = await fetch(`/api/profile?userId=${userId}`);
+      const response = await fetch(
+        `http://localhost:3000/api/profile?userId=${userId}`
+      );
       if (!response.ok) {
         throw new Error("Failed to fetch user profile");
       }
@@ -231,7 +488,7 @@ const ActivityLogging = () => {
   // Function to update user profile data
   const updateUserProfile = async (userId, profileData) => {
     try {
-      const response = await fetch("/api/profile", {
+      const response = await fetch("http://localhost:3000/api/profile", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -253,20 +510,70 @@ const ActivityLogging = () => {
       throw error;
     }
   };
-
-  // Update your existing handleSaveWorkout function
+  // Improved handleSaveWorkout function
   const handleSaveWorkout = async () => {
     try {
-      // Assume userId is stored in context or localStorage
-      const userId = localStorage.getItem("userId") || 1; // Default to 1 for testing
+      // Validate workout data before saving
+      if (workoutPlan.length === 0) {
+        alert(
+          "Please add at least one exercise to your workout before saving."
+        );
+        return;
+      }
 
-      // Save the workout to the API
-      await saveWorkoutToAPI(userId, workoutPlan, stepsCount, activeMinutes);
+      // Get userId from localStorage, with fallback
+      const userId = localStorage.getItem("userId") || "1"; // Default to 1 for testing
+
+      // Prepare workouts in the format expected by the API
+      const workoutData = workoutPlan.map((exercise) => ({
+        exercise_id: exercise.exercise_id,
+        duration: exercise.duration || 15, // Default to 15 mins if not specified
+        date: selectedDate,
+        reps: exercise.reps || 12, // Optional, if your API accepts this
+      }));
+
+      console.log("Sending workout data:", {
+        userId,
+        workouts: workoutData,
+        steps: stepsCount,
+        activeMinutes: activeMinutes,
+      });
+
+      // Send workout data to the API
+      const response = await fetch("http://localhost:3000/api/workouts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId,
+          workouts: workoutData,
+          steps: stepsCount,
+          activeMinutes: activeMinutes,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.text();
+        console.error("Server error response:", errorData);
+        throw new Error(
+          `Failed to save workout: ${response.status} ${response.statusText}`
+        );
+      }
+
+      const result = await response.json();
+      console.log("Workout saved successfully:", result);
 
       // Update local state
       const updatedHistory = { ...workoutHistory };
       updatedHistory[selectedDate] = [...workoutPlan];
       setWorkoutHistory(updatedHistory);
+
+      // Optionally, refresh workout history data from the server
+      const updatedHistoryFromServer = await fetchWorkoutHistory(userId);
+      if (Object.keys(updatedHistoryFromServer).length > 0) {
+        setWorkoutHistory(updatedHistoryFromServer);
+      }
 
       // Reset steps and active minutes after saving
       setStepsCount(0);
@@ -274,9 +581,11 @@ const ActivityLogging = () => {
 
       alert("Workout saved successfully!");
     } catch (error) {
-      alert("Error saving workout. Please try again.");
+      console.error("Error saving workout:", error);
+      alert(`Error saving workout: ${error.message}. Please try again.`);
     }
   };
+
   // Function to add workouts based on purchased plan level
   const addPlanBasedWorkouts = () => {
     if (planWorkoutsAdded || workoutPlan.length > 0) {
@@ -483,6 +792,7 @@ const ActivityLogging = () => {
           ? {
               ...exercise,
               id: ex.id,
+              exercise_id: exercise.exercise_id, // Include exercise_id from database
               bodyPart,
               duration,
               calories,
@@ -498,6 +808,7 @@ const ActivityLogging = () => {
       const newExercise = {
         ...exercise,
         id: Date.now(),
+        exercise_id: exercise.exercise_id, // Include exercise_id from database
         bodyPart,
         duration,
         calories,
@@ -547,32 +858,50 @@ const ActivityLogging = () => {
     }
   };
 
-  const handleAddSteps = (e) => {
+  const handleAddSteps = async (e) => {
     e.preventDefault();
     const steps = parseInt(e.target.steps.value) || 0;
-    setStepsCount(stepsCount + steps);
 
-    // Update total calories based on steps (rough estimate)
-    const caloriesPerStep = 0.04;
-    const newCalories = Math.round(steps * caloriesPerStep);
-    setCaloriesBurned(caloriesBurned + newCalories);
+    try {
+      const userId = localStorage.getItem("userId") || 1;
+      await saveActivityToAPI(userId, steps, 0);
 
-    // Clear form
-    e.target.steps.value = "";
+      // Update UI after successful save
+      setStepsCount(stepsCount + steps);
+
+      // Update total calories based on steps (rough estimate)
+      const caloriesPerStep = 0.04;
+      const newCalories = Math.round(steps * caloriesPerStep);
+      setCaloriesBurned(caloriesBurned + newCalories);
+
+      // Clear form
+      e.target.steps.value = "";
+    } catch (error) {
+      alert("Error saving steps. Please try again.");
+    }
   };
 
-  const handleAddActiveMinutes = (e) => {
+  const handleAddActiveMinutes = async (e) => {
     e.preventDefault();
     const minutes = parseInt(e.target.minutes.value) || 0;
-    setActiveMinutes(activeMinutes + minutes);
 
-    // Update total calories based on active minutes (rough estimate)
-    const caloriesPerMinute = 4;
-    const newCalories = minutes * caloriesPerMinute;
-    setCaloriesBurned(caloriesBurned + newCalories);
+    try {
+      const userId = localStorage.getItem("userId") || 1;
+      await saveActivityToAPI(userId, 0, minutes);
 
-    // Clear form
-    e.target.minutes.value = "";
+      // Update UI after successful save
+      setActiveMinutes(activeMinutes + minutes);
+
+      // Update total calories based on active minutes (rough estimate)
+      const caloriesPerMinute = 4;
+      const newCalories = minutes * caloriesPerMinute;
+      setCaloriesBurned(caloriesBurned + newCalories);
+
+      // Clear form
+      e.target.minutes.value = "";
+    } catch (error) {
+      alert("Error saving active minutes. Please try again.");
+    }
   };
 
   const handleExportData = () => {
@@ -651,9 +980,29 @@ const ActivityLogging = () => {
 
   // Effects last, after state and functions
   useEffect(() => {
-    if (exercises !== undefined) {
-      setExerciseData(exercises);
-    }
+    const loadExerciseData = async () => {
+      try {
+        // First fetch from API
+        const apiExercises = await fetchExercises();
+
+        // Only fallback to local JSON if API returns empty results
+        if (
+          Object.keys(apiExercises.exercises_by_body_part).length === 0 &&
+          exercises !== undefined
+        ) {
+          console.log("Using fallback local exercise data");
+          setExerciseData(exercises);
+        }
+      } catch (error) {
+        console.error("Error loading exercise data:", error);
+        // Fallback to local JSON if API fails
+        if (exercises !== undefined) {
+          setExerciseData(exercises);
+        }
+      }
+    };
+
+    loadExerciseData();
 
     // Load saved data from localStorage on component mount
     const savedWorkouts = localStorage.getItem("workoutHistory");
@@ -674,6 +1023,23 @@ const ActivityLogging = () => {
       setPlanWorkoutsAdded(true); // Mark as added since we're loading existing data
     }
   }, []);
+
+  useEffect(() => {
+    // Reset and fetch new data when search query or body part changes
+    const loadFilteredExercises = async () => {
+      setCurrentPage(1);
+      setHasMoreExercises(true);
+      const exercises = await fetchExercises(1, true);
+      setExerciseData(exercises);
+    };
+
+    // Use a debounce to avoid too many requests while typing
+    const handler = setTimeout(() => {
+      loadFilteredExercises();
+    }, 500);
+
+    return () => clearTimeout(handler);
+  }, [searchQuery, selectedBodyPart]);
 
   // Add plan-based workouts when exercise data is loaded and plan is available
   useEffect(() => {
@@ -735,6 +1101,31 @@ const ActivityLogging = () => {
 
     loadUserData();
   }, []);
+
+  const saveActivityToAPI = async (userId, stepsData, minutesData) => {
+    try {
+      const response = await fetch("http://localhost:3000/api/activity/steps", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId,
+          steps: stepsData,
+          minutes: minutesData,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to save activity data");
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error("Error saving activity data:", error);
+      throw error;
+    }
+  };
 
   const bodyParts = Object.keys(exerciseData.exercises_by_body_part);
   const recommendedExercises = getRecommendedExercises();
@@ -906,64 +1297,7 @@ const ActivityLogging = () => {
               </select>
             </div>
 
-            <div className="exercise-list-container">
-              <div className="exercise-header">
-                <div>Exercise</div>
-                <div>Type</div>
-                <div>Level</div>
-                <div>Action</div>
-              </div>
-
-              {Object.entries(filteredExercises()).map(
-                ([bodyPart, exercises]) => (
-                  <div key={bodyPart} className="body-part-section">
-                    <div className="body-part-title">{bodyPart}</div>
-
-                    {exercises.map((exercise) => (
-                      <div key={exercise.title} className="exercise-item">
-                        <div>
-                          <div className="exercise-title">{exercise.title}</div>
-                          <div className="exercise-description">
-                            {exercise.description}
-                          </div>
-                          {exercise.youtube_video && (
-                            <a
-                              href={exercise.youtube_video}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="exercise-video-link"
-                            >
-                              Watch Video
-                            </a>
-                          )}
-                          <div className="exercise-metadata">
-                            <span>Equipment: {exercise.equipment}</span>
-                            {exercise.rating > 0 && (
-                              <div className="exercise-rating">
-                                <span className="star-icon">★</span>
-                                <span>{exercise.rating.toFixed(1)}</span>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                        <div className="exercise-details">{exercise.type}</div>
-                        <div className="exercise-details">{exercise.level}</div>
-                        <div className="exercise-details">
-                          <button
-                            onClick={() =>
-                              handleAddExercise(exercise, bodyPart)
-                            }
-                            className="add-button"
-                          >
-                            {editingExercise ? "Update" : "+"}
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )
-              )}
-            </div>
+            <ExercisesList />
           </>
         ) : (
           <div className="workout-history">

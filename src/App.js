@@ -11,7 +11,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import './App.css';
 import './components/Firebase'; // Import Firebase initialization
 import SignupForm from './components/signup';
-import LoginForm from './components/Login';
+import LoginForm from './components/login';
 import Dashboard from './components/Dashboard';
 import ActivityLogging from './components/ActivityLogging';
 import HomePage from './components/HomePage'; // Import the new HomePage component
