@@ -1,12 +1,3 @@
-/* Last Name, First Name - Student ID */
-/* 
- Suresh, Kaushick ( 1002237680 ), 
- Sivaprakash, Akshay Prassanna ( 1002198274 ) ,  
- Sonwane, Pratik ( 1002170610 ) , 
- Shaik, Arfan ( 1002260039 ) , 
- Sheth, Jeet ( 1002175315 ) 
-*/
-
 import React, { useState, useEffect } from "react";
 import {
   BarChart,
@@ -28,179 +19,91 @@ import {
 import "../styles/AnalyticsDashboard.css";
 import Nav from "./Nav";
 
-
 const AnalyticsDashboard = ({ userData }) => {
   const [timeFrame, setTimeFrame] = useState("weekly");
   const [selectedMetric, setSelectedMetric] = useState("calories");
   const [bodyPartFilter, setBodyPartFilter] = useState("All");
   const [purchasedPlans, setPurchasedPlans] = useState(() => {
-      const savedPlans = localStorage.getItem('purchasedPlans');
-      return savedPlans ? JSON.parse(savedPlans) : [];
-    });
-    
+    const savedPlans = localStorage.getItem("purchasedPlans");
+    return savedPlans ? JSON.parse(savedPlans) : [];
+  });
+  
+  // Analytics data state
+  const [analyticsData, setAnalyticsData] = useState({
+    calories: [],
+    exerciseTime: [],
+    weight: [],
+    bodyPartDistribution: [],
+    difficultyDistribution: [],
+    predictiveWeight: [],
+    exerciseRecommendations: [],
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Example user data structure (would be passed as props in real app)
-  const userDataExample = userData || {
-    weight: [
-      { date: "2025-02-01", value: 180 },
-      { date: "2025-02-08", value: 178 },
-      { date: "2025-02-15", value: 176 },
-      { date: "2025-02-22", value: 175 },
-      { date: "2025-03-01", value: 173 },
-      { date: "2025-03-08", value: 172 },
-    ],
-    calories: [
-      { date: "2025-03-01", value: 350 },
-      { date: "2025-03-02", value: 400 },
-      { date: "2025-03-03", value: 320 },
-      { date: "2025-03-04", value: 500 },
-      { date: "2025-03-05", value: 450 },
-      { date: "2025-03-06", value: 280 },
-      { date: "2025-03-07", value: 600 },
-    ],
-    exerciseTime: [
-      { date: "2025-03-01", value: 45 },
-      { date: "2025-03-02", value: 60 },
-      { date: "2025-03-03", value: 30 },
-      { date: "2025-03-04", value: 75 },
-      { date: "2025-03-05", value: 60 },
-      { date: "2025-03-06", value: 20 },
-      { date: "2025-03-07", value: 90 },
-    ],
-    exercisesByBodyPart: {
-      Abdominals: [
-        {
-          title: "Partner plank band row",
-          description:
-            "The partner plank band row is an abdominal exercise where two partners perform single-arm planks while pulling on the opposite ends of an exercise band.",
-          type: "Strength",
-          equipment: "Bands",
-          level: "Intermediate",
-          count: 5,
-        },
-        {
-          title: "Banded crunch isometric hold",
-          description:
-            "The banded crunch isometric hold is an exercise targeting the abdominal muscles.",
-          type: "Strength",
-          equipment: "Bands",
-          level: "Intermediate",
-          count: 8,
-        },
-      ],
-      Chest: [
-        {
-          title: "Bench Press",
-          description: "Classic chest exercise",
-          type: "Strength",
-          equipment: "Barbell",
-          level: "Beginner",
-          count: 12,
-        },
-      ],
-      Legs: [
-        {
-          title: "Squats",
-          description: "Compound leg exercise",
-          type: "Strength",
-          equipment: "Bodyweight",
-          level: "Beginner",
-          count: 15,
-        },
-      ],
-    },
-  };
-
-  // Process data for body part distribution chart
-  const getBodyPartData = () => {
-    const data = [];
-    let total = 0;
-
-    Object.keys(userDataExample.exercisesByBodyPart).forEach((bodyPart) => {
-      const count = userDataExample.exercisesByBodyPart[bodyPart].reduce(
-        (sum, exercise) => sum + (exercise.count || 0),
-        0
-      );
-      total += count;
-      data.push({ name: bodyPart, value: count });
-    });
-
-    return data;
-  };
-
-  // Process exercise time data based on selected timeframe
-  const getTimeData = () => {
-    const data = userDataExample[selectedMetric] || [];
-
-    if (timeFrame === "weekly") {
-      return data.slice(-7);
-    } else if (timeFrame === "monthly") {
-      return data.slice(-30);
-    } else {
-      return data.slice(-90);
-    }
-  };
-
-  // Generate predictive data based on current trends
-  const getPredictiveData = () => {
-    const data = userDataExample.weight;
-    if (data.length < 2) return [];
-
-    const lastValue = data[data.length - 1].value;
-    const previousValue = data[data.length - 2].value;
-    const trend = lastValue - previousValue;
-
-    // Create next 4 predicted points
-    const predictions = [];
-    for (let i = 1; i <= 4; i++) {
-      const date = new Date();
-      date.setDate(date.getDate() + i * 7);
-      predictions.push({
-        date: date.toISOString().split("T")[0],
-        value: Math.max(lastValue - trend * i, 0), // Prevent negative weights
-        isPrediction: true,
-      });
-    }
-
-    return [...data, ...predictions];
-  };
-
-  // Calculate exercise difficulty distribution
-  const getDifficultyDistribution = () => {
-    const difficulties = { Beginner: 0, Intermediate: 0, Advanced: 0 };
-
-    Object.keys(userDataExample.exercisesByBodyPart).forEach((bodyPart) => {
-      userDataExample.exercisesByBodyPart[bodyPart].forEach((exercise) => {
-        if (difficulties.hasOwnProperty(exercise.level)) {
-          difficulties[exercise.level] += exercise.count || 1;
+  // Fetch analytics data from the API
+  useEffect(() => {
+    const fetchAnalyticsData = async () => {
+      try {
+        setLoading(true);
+        // Get the userId from localStorage or context
+        const userId = localStorage.getItem("userId");
+        
+        if (!userId) {
+          setError("User ID not found. Please log in.");
+          setLoading(false);
+          return;
         }
-      });
-    });
+        
+        const response = await fetch(`http://localhost:3000/api/analytics?userId=${userId}&timeFrame=${timeFrame}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        
+        if (!response.ok) {
+          throw new Error("Failed to fetch analytics data");
+        }
+        
+        const data = await response.json();
+        setAnalyticsData(data);
+        setLoading(false);
+      } catch (err) {
+        console.error("Error fetching analytics data:", err);
+        setError(err.message);
+        setLoading(false);
+      }
+    };
+    
+    fetchAnalyticsData();
+  }, [timeFrame]); // Re-fetch when timeFrame changes
 
-    return Object.keys(difficulties).map((level) => ({
-      name: level,
-      value: difficulties[level],
-    }));
+  // Get time data based on selected metric
+  const getTimeData = () => {
+    if (loading || error) return [];
+    
+    switch (selectedMetric) {
+      case "calories":
+        return analyticsData.calories;
+      case "exerciseTime":
+        return analyticsData.exerciseTime;
+      case "weight":
+        return analyticsData.weight;
+      default:
+        return [];
+    }
   };
 
   // Get filtered exercises based on selected body part
   const getFilteredExercises = () => {
+    if (loading || error || !analyticsData.exerciseRecommendations) return [];
+    
     if (bodyPartFilter === "All") {
-      const allExercises = [];
-      Object.keys(userDataExample.exercisesByBodyPart).forEach((bodyPart) => {
-        userDataExample.exercisesByBodyPart[bodyPart].forEach((exercise) => {
-          allExercises.push({ ...exercise, bodyPart });
-        });
-      });
-      return allExercises;
+      return analyticsData.exerciseRecommendations;
     } else {
-      return (
-        userDataExample.exercisesByBodyPart[bodyPartFilter]?.map(
-          (exercise) => ({
-            ...exercise,
-            bodyPart: bodyPartFilter,
-          })
-        ) || []
+      return analyticsData.exerciseRecommendations.filter(
+        exercise => exercise.bodyPart === bodyPartFilter
       );
     }
   };
@@ -215,10 +118,13 @@ const AnalyticsDashboard = ({ userData }) => {
     "#00C49F",
   ];
 
+  if (loading) return <div className="loading">Loading analytics data...</div>;
+  if (error) return <div className="error">Error: {error}</div>;
+
   return (
     <div className="app-container">
       <div className="nav-wrapper">
-        <Nav purchasedPlans={purchasedPlans}/>
+        <Nav purchasedPlans={purchasedPlans} />
       </div>
       <div className="analytics-dashboard">
         <h1>Analytics Dashboard</h1>
@@ -255,9 +161,9 @@ const AnalyticsDashboard = ({ userData }) => {
               onChange={(e) => setBodyPartFilter(e.target.value)}
             >
               <option value="All">All</option>
-              {Object.keys(userDataExample.exercisesByBodyPart).map((part) => (
-                <option key={part} value={part}>
-                  {part}
+              {analyticsData.bodyPartDistribution.map((part) => (
+                <option key={part.name} value={part.name}>
+                  {part.name}
                 </option>
               ))}
             </select>
@@ -269,7 +175,10 @@ const AnalyticsDashboard = ({ userData }) => {
             <h2>Trend Analysis</h2>
             <p className="insight-text">
               {selectedMetric === "weight"
-                ? "You are on track to reach your target weight in approximately 4 weeks."
+                ? analyticsData.weight && analyticsData.weight.length >= 2
+                  ? `You've ${analyticsData.weight[analyticsData.weight.length - 1].value < analyticsData.weight[0].value 
+                     ? "lost" : "gained"} weight since you started tracking.`
+                  : "Start tracking your weight to see trends."
                 : "Your performance is improving consistently. Keep up the good work!"}
             </p>
             <ResponsiveContainer width="100%" height={250}>
@@ -303,7 +212,7 @@ const AnalyticsDashboard = ({ userData }) => {
               coming weeks:
             </p>
             <ResponsiveContainer width="100%" height={250}>
-              <AreaChart data={getPredictiveData()}>
+              <AreaChart data={analyticsData.predictiveWeight}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="date" />
                 <YAxis />
@@ -333,7 +242,7 @@ const AnalyticsDashboard = ({ userData }) => {
                 </defs>
                 <Area
                   type="monotone"
-                  dataKey="value"
+                  dataKey={(d) => (!d.isPrediction ? d.value : null)}
                   stroke="#8884d8"
                   fillOpacity={1}
                   fill="url(#actualGradient)"
@@ -359,7 +268,7 @@ const AnalyticsDashboard = ({ userData }) => {
             <ResponsiveContainer width="100%" height={250}>
               <PieChart>
                 <Pie
-                  data={getBodyPartData()}
+                  data={analyticsData.bodyPartDistribution}
                   cx="50%"
                   cy="50%"
                   labelLine={false}
@@ -371,7 +280,7 @@ const AnalyticsDashboard = ({ userData }) => {
                     `${name}: ${(percent * 100).toFixed(0)}%`
                   }
                 >
-                  {getBodyPartData().map((entry, index) => (
+                  {analyticsData.bodyPartDistribution.map((entry, index) => (
                     <Cell
                       key={`cell-${index}`}
                       fill={COLORS[index % COLORS.length]}
@@ -387,7 +296,7 @@ const AnalyticsDashboard = ({ userData }) => {
           <div className="card difficulty-distribution">
             <h2>Exercise Difficulty Distribution</h2>
             <ResponsiveContainer width="100%" height={250}>
-              <BarChart data={getDifficultyDistribution()}>
+              <BarChart data={analyticsData.difficultyDistribution}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
                 <YAxis />

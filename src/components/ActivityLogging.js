@@ -364,24 +364,25 @@ const ActivityLogging = () => {
 
       // Process workouts from the database
       data.workouts.forEach((workout) => {
-        const date = new Date(workout.workout_date).toISOString().split("T")[0];
-
+        console.log(workout.date)
+        const date = new Date(workout.date).toISOString().split("T")[0];
         if (!formattedHistory[date]) {
           formattedHistory[date] = [];
         }
 
         formattedHistory[date].push({
           id: workout.workout_id,
-          title: workout.exercise.title,
-          bodyPart: workout.exercise.body_part,
+          title: workout.exerciseName,
+          bodyPart: workout.bodyPart,
           duration: workout.duration,
           calories: Math.round(workout.duration * 5), // Simple calorie estimation
           reps: 12, // Default value if not stored
           date: date,
-          type: workout.exercise.type,
-          level: workout.exercise.level,
-          description: workout.exercise.description,
-          youtube_video: workout.exercise.youtube_video,
+          type: workout.exerciseType,
+          level: workout.exerciseLevel,
+          description: workout.exerciseDescription,
+          youtube_video: workout.youtubeVideo,
+          exerciseId: workout.exerciseId,
         });
       });
 
@@ -417,6 +418,7 @@ const ActivityLogging = () => {
           workoutPlan,
           steps: stepsData,
           activeMinutes: minutesData,
+          // caloriesBurned: exercises.reduce((sum, ex) => sum + ex.calories, 0),
         }),
       });
 
@@ -519,7 +521,6 @@ const ActivityLogging = () => {
 
       // Get userId from localStorage, with fallback
       const userId = localStorage.getItem("userId") || "1"; // Default to 1 for testing
-
       // Prepare workouts in the format expected by the API
       const workoutData = workoutPlan.map((exercise) => ({
         exercise_id: exercise.exercise_id,
@@ -546,6 +547,7 @@ const ActivityLogging = () => {
           workouts: workoutData,
           steps: stepsCount,
           activeMinutes: activeMinutes,
+          caloriesBurned: workoutPlan.reduce((sum, ex) => sum + ex.calories, 0),
         }),
       });
 
@@ -1134,15 +1136,6 @@ const ActivityLogging = () => {
       <div className="fitness-tracker">
         <div className="header">
           <h1>Fitness Tracker</h1>
-          <div className="user-profile-summary">
-            <span>{userProfile.name}</span>
-            <button
-              className="profile-button"
-              onClick={() => alert("Profile settings would open here")}
-            >
-              Profile
-            </button>
-          </div>
         </div>
 
         <div className="date-selector">
@@ -1347,12 +1340,6 @@ const ActivityLogging = () => {
                   </div>
                 </div>
                 <div className="workout-exercise-actions">
-                  <button
-                    onClick={() => handleEditExercise(exercise)}
-                    className="edit-button"
-                  >
-                    Edit
-                  </button>
                   <button
                     onClick={() => handleRemoveExercise(exercise.id)}
                     className="remove-button"

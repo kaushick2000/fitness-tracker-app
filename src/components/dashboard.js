@@ -18,6 +18,7 @@ import {
 } from "recharts";
 import "../styles/CombinedDashboard.css";
 import { fetchDashboardData } from "./utils/dashboardService";
+import { generateDashboardInsights } from "./OpenRouter/NVIDIA_Api"; // Import the new function
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
@@ -39,6 +40,7 @@ const Dashboard = () => {
     workoutDuration: false,
   });
   const [chartType, setChartType] = useState("bar");
+  const [insightsLoading, setInsightsLoading] = useState(false);
 
   // Fetch dashboard data on component mount
   useEffect(() => {
@@ -49,6 +51,21 @@ const Dashboard = () => {
         const data = await fetchDashboardData(userId);
         setDashboardData(data);
         setLoading(false);
+        
+        // After getting dashboard data, fetch AI insights
+        try {
+          setInsightsLoading(true);
+          const insights = await generateDashboardInsights(data.userData || data);
+          console.log(insights)
+          setDashboardData(prevData => ({
+            ...prevData,
+            aiInsights: insights
+          }));
+          setInsightsLoading(false);
+        } catch (insightErr) {
+          console.error("Failed to load AI insights:", insightErr);
+          setInsightsLoading(false);
+        }
       } catch (err) {
         console.error("Failed to load dashboard data:", err);
         setError(err.message || "Failed to load dashboard data");
@@ -73,6 +90,7 @@ const Dashboard = () => {
     if (loading) return <div className="loading">Loading metrics...</div>;
 
     const { topMetrics } = dashboardData;
+    // console.log(topMetrics)
 
     return (
       <div className="top-metrics">
@@ -103,7 +121,7 @@ const Dashboard = () => {
   };
 
   const renderAIInsights = () => {
-    if (loading) return <div className="loading">Loading insights...</div>;
+    if (loading || insightsLoading) return <div className="loading">Loading insights...</div>;
 
     const { aiInsights } = dashboardData;
 
@@ -115,6 +133,24 @@ const Dashboard = () => {
             <li key={index}>{insight}</li>
           ))}
         </ul>
+        <button 
+          className="refresh-insights-button"
+          onClick={async () => {
+            setInsightsLoading(true);
+            try {
+              const freshInsights = await generateDashboardInsights(dashboardData.userData || dashboardData);
+              setDashboardData(prevData => ({
+                ...prevData,
+                aiInsights: freshInsights
+              }));
+            } catch (e) {
+              console.error("Error refreshing insights:", e);
+            }
+            setInsightsLoading(false);
+          }}
+        >
+          {insightsLoading ? 'Loading...' : 'Refresh Insights'}
+        </button>
       </div>
     );
   };

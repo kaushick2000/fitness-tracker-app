@@ -61,6 +61,7 @@ function processDashboardData(userData) {
  * Extract top metrics for dashboard cards
  */
 function extractTopMetrics(userData) {
+  console.log("userdata statistics", userData.statistics)
   return {
     weight: {
       value: userData.personalInfo?.currentWeight || 0,
