@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Nav from "./Nav";
 import "../styles/Profile.css";
-import ProfilePic from "../assets/profilepic.jpg";
+import { toast } from "react-toastify";
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -12,13 +12,30 @@ const Profile = () => {
   const [fitnessInfo, setFitnessInfo] = useState({});
   const [accountInfo, setAccountInfo] = useState({});
   const [purchasedPlans, setPurchasedPlans] = useState([]);
+  const [profileImage, setProfileImage] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    if (!selectedFile) return;
+
+    setProfileImage(selectedFile);
+    
+    // Create preview URL
+    const fileReader = new FileReader();
+    fileReader.onload = () => {
+      setPreviewUrl(fileReader.result);
+    };
+    fileReader.readAsDataURL(selectedFile);
+  };
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         // Get the user email from localStorage or context
         const userEmail = localStorage.getItem("userEmail");
-        
+
         if (!userEmail) {
           setError("User not logged in");
           setLoading(false);
@@ -26,13 +43,18 @@ const Profile = () => {
         }
 
         // Fetch user profile data from the API
-        const response = await fetch(`http://localhost:3000/api/profile?email=${encodeURIComponent(userEmail)}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-        });
+        const response = await fetch(
+          `http://localhost:3000/api/profile?email=${encodeURIComponent(
+            userEmail
+          )}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+          }
+        );
 
         if (!response.ok) {
           throw new Error("Failed to fetch profile data");
@@ -40,71 +62,83 @@ const Profile = () => {
 
         const data = await response.json();
         console.log("API response:", data);
-        
+
         // Transform API data to the format used by the frontend
         const userData = data.user;
         const profileData = data.profile || {};
-        
+
         // Map the API data structure to our local state structure
         setUser({
           ...userData,
-          profile: profileData
+          profile: profileData,
         });
-        
+
         // Parse fitness goals from JSON if needed
-        const fitnessGoals = profileData.fitness_goals ? 
-          (Array.isArray(profileData.fitness_goals) ? profileData.fitness_goals : JSON.parse(profileData.fitness_goals)) : 
-          [];
-          
+        const fitnessGoals = profileData.fitness_goals
+          ? Array.isArray(profileData.fitness_goals)
+            ? profileData.fitness_goals
+            : JSON.parse(profileData.fitness_goals)
+          : [];
+
+        // Set profile picture URL if it exists
+        if (profileData.profile_pic) {
+          setPreviewUrl(profileData.profile_pic);
+        }
+
         // Transform to frontend data structure
         setPersonalInfo({
-          firstName: userData.name?.split(' ')[0] || '',
-          lastName: userData.name?.split(' ')[1] || '',
-          email: userData.email || '',
-          phoneNumber: userData.phone || '',
-          gender: profileData.gender || '',
-          birthdate: profileData.birthday ? new Date(profileData.birthday).toISOString().split('T')[0] : '',
-          height: profileData.height || '',
-          currentWeight: profileData.curr_weight || '',
-          goalWeight: profileData.goal_weight || '',
-          profileImage: profileData.profile_pic || null
+          firstName: userData.name?.split(" ")[0] || "",
+          lastName: userData.name?.split(" ")[1] || "",
+          email: userData.email || "",
+          phoneNumber: userData.phone || "",
+          gender: profileData.gender || "",
+          birthdate: profileData.birthday
+            ? new Date(profileData.birthday).toISOString().split("T")[0]
+            : "",
+          height: profileData.height || "",
+          currentWeight: profileData.curr_weight || "",
+          goalWeight: profileData.goal_weight || "",
         });
         
         setFitnessInfo({
-          fitnessLevel: profileData.fitness_level || '',
-          activityLevel: '', // Not in the schema, but used in frontend
+          fitnessLevel: profileData.fitness_level || "",
+          activityLevel: "", // Not in the schema, but used in frontend
           workoutFrequency: 3, // Default value
           fitnessGoals: fitnessGoals,
           preferredWorkouts: [], // Not in schema, but used in frontend
-          medicalConditions: [] // Not in schema, but used in frontend
+          medicalConditions: [], // Not in schema, but used in frontend
         });
-        
+
         setAccountInfo({
-          username: userData.email?.split('@')[0] || '',
-          memberSince: new Date(userData.created_at).toLocaleDateString() || '',
-          subscription: userData.paid ? 'Premium' : 'Free',
-          subscriptionRenewal: '',
+          username: userData.email?.split("@")[0] || "",
+          memberSince: new Date(userData.created_at).toLocaleDateString() || "",
+          subscription: userData.paid ? "Premium" : "Free",
+          subscriptionRenewal: "",
           notificationPreferences: {
             email: true,
             push: false,
-            sms: false
+            sms: false,
           },
           dataSharing: {
             anonymizedResearch: false,
-            thirdPartyApps: false
-          }
+            thirdPartyApps: false,
+          },
         });
-        
+
         // Mock purchased plans (not in current API data)
-        const mockPlans = userData.paid ? [{
-          name: "Premium Fitness Plan",
-          description: "Full access to all workouts and nutrition guides",
-          purchaseDate: new Date().setMonth(new Date().getMonth() - 1),
-          expiryDate: new Date().setMonth(new Date().getMonth() + 11)
-        }] : [];
-        
+        const mockPlans = userData.paid
+          ? [
+              {
+                name: "Premium Fitness Plan",
+                description: "Full access to all workouts and nutrition guides",
+                purchaseDate: new Date().setMonth(new Date().getMonth() - 1),
+                expiryDate: new Date().setMonth(new Date().getMonth() + 11),
+              },
+            ]
+          : [];
+
         setPurchasedPlans(mockPlans);
-        
+
         // Save purchased plans to localStorage
         localStorage.setItem("purchasedPlans", JSON.stringify(mockPlans));
       } catch (err) {
@@ -161,21 +195,86 @@ const Profile = () => {
     }));
   };
 
+  // Image compression function
+  const compressAndConvertImage = (
+    file,
+    maxWidth = 800,
+    maxHeight = 800,
+    quality = 0.7
+  ) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target.result;
+        img.onload = () => {
+          // Create a canvas to resize the image
+          const canvas = document.createElement("canvas");
+          let width = img.width;
+          let height = img.height;
+
+          // Calculate new dimensions
+          if (width > height) {
+            if (width > maxWidth) {
+              height *= maxWidth / width;
+              width = maxWidth;
+            }
+          } else {
+            if (height > maxHeight) {
+              width *= maxHeight / height;
+              height = maxHeight;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+
+          // Draw and compress the image
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, width, height);
+
+          // Get the compressed data URL
+          const dataUrl = canvas.toDataURL("image/jpeg", quality);
+          resolve(dataUrl);
+        };
+        img.onerror = (error) => reject(error);
+      };
+      reader.onerror = (error) => reject(error);
+    });
+  };
+
   const handleSave = async () => {
     try {
+      setSaving(true);
       const userEmail = localStorage.getItem("userEmail");
-      
+
       if (!userEmail) {
         setError("User not logged in");
+        setSaving(false);
         return;
       }
 
       // Transform our frontend data structure to the API expected format
       const userData = {
         name: `${personalInfo.firstName} ${personalInfo.lastName}`.trim(),
-        phone: personalInfo.phoneNumber
+        phone: personalInfo.phoneNumber,
       };
-      
+
+      // Process profile picture if it exists
+      let profilePicUrl = previewUrl;
+
+      if (profileImage) {
+        try {
+          profilePicUrl = await compressAndConvertImage(profileImage);
+        } catch (err) {
+          console.error("Error processing image:", err);
+          toast.error("Failed to process profile picture");
+          setSaving(false);
+          return;
+        }
+      }
+
       const profileData = {
         gender: personalInfo.gender,
         birthday: personalInfo.birthdate,
@@ -184,40 +283,54 @@ const Profile = () => {
         goal_weight: personalInfo.goalWeight,
         fitness_level: fitnessInfo.fitnessLevel?.toUpperCase() || "BEGINNER",
         fitness_goals: fitnessInfo.fitnessGoals || [],
-        profile_pic: personalInfo.profileImage
+        profile_pic: profilePicUrl,
       };
 
       // Send the updated data to the API
-      const response = await fetch(`http://localhost:3000/api/profile?email=${encodeURIComponent(userEmail)}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          user: userData,
-          profile: profileData
-        }),
-      });
+      const response = await fetch(
+        `http://localhost:3000/api/profile?email=${encodeURIComponent(
+          userEmail
+        )}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            user: userData,
+            profile: profileData,
+          }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to update profile");
       }
-      
+
       const result = await response.json();
       console.log("Update result:", result);
-      
+
       // Update the user state with new data
-      setUser(prev => ({
+      setUser((prev) => ({
         ...prev,
-        ...result.user
+        ...result.user,
+        profile: {
+          ...prev.profile,
+          ...result.profile
+        }
       }));
-      
+
+      // Reset profileImage after successful save
+      setProfileImage(null);
       setEditMode(false);
-      alert("Profile updated successfully!");
+      toast.success("Profile updated successfully!");
     } catch (err) {
       console.error("Error updating profile:", err);
       setError(err.message || "Failed to update profile");
+      toast.error("Failed to update profile");
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -225,21 +338,26 @@ const Profile = () => {
     // Reset form to current user data
     const userData = user;
     const profileData = user.profile || {};
-    
+
+    // Reset profile picture preview to current saved one
+    setPreviewUrl(profileData.profile_pic || "");
+    setProfileImage(null);
+
     // Transform back to frontend data structure
     setPersonalInfo({
-      firstName: userData.name?.split(' ')[0] || '',
-      lastName: userData.name?.split(' ')[1] || '',
-      email: userData.email || '',
-      phoneNumber: userData.phone || '',
-      gender: profileData.gender || '',
-      birthdate: profileData.birthday ? new Date(profileData.birthday).toISOString().split('T')[0] : '',
-      height: profileData.height || '',
-      currentWeight: profileData.curr_weight || '',
-      goalWeight: profileData.goal_weight || '',
-      profileImage: profileData.profile_pic || null
+      firstName: userData.name?.split(" ")[0] || "",
+      lastName: userData.name?.split(" ")[1] || "",
+      email: userData.email || "",
+      phoneNumber: userData.phone || "",
+      gender: profileData.gender || "",
+      birthdate: profileData.birthday
+        ? new Date(profileData.birthday).toISOString().split("T")[0]
+        : "",
+      height: profileData.height || "",
+      currentWeight: profileData.curr_weight || "",
+      goalWeight: profileData.goal_weight || "",
     });
-    
+
     setEditMode(false);
   };
 
@@ -285,14 +403,38 @@ const Profile = () => {
       <div className="profile-page">
         <div className="profile-header">
           <div className="profile-image-container">
-            <img 
-              src={personalInfo.profileImage || ProfilePic} 
-              alt="Profile" 
-              className="profile-image" 
-            />
-            {editMode && (
-              <button className="change-photo-btn">Change Photo</button>
-            )}
+            <div className="profile-picture-section">
+              <div className="profile-picture-container">
+                {previewUrl ? (
+                  <img
+                    src={previewUrl}
+                    alt="Profile"
+                    className="profile-picture"
+                  />
+                ) : (
+                  <div className="profile-picture-placeholder">
+                    {user.name ? user.name.charAt(0).toUpperCase() : "?"}
+                  </div>
+                )}
+                {editMode && (
+                  <div className="profile-picture-overlay">
+                    <label
+                      htmlFor="profile-pic-upload"
+                      className="upload-button"
+                    >
+                      Change Photo
+                      <input
+                        id="profile-pic-upload"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileChange}
+                        style={{ display: "none" }}
+                      />
+                    </label>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
           <div className="profile-title">
             <h1>
@@ -310,10 +452,18 @@ const Profile = () => {
               </button>
             ) : (
               <div className="edit-actions">
-                <button className="save-btn" onClick={handleSave}>
-                  Save Changes
+                <button 
+                  className="save-btn" 
+                  onClick={handleSave}
+                  disabled={saving}
+                >
+                  {saving ? "Saving..." : "Save Changes"}
                 </button>
-                <button className="cancel-btn" onClick={handleCancel}>
+                <button 
+                  className="cancel-btn" 
+                  onClick={handleCancel}
+                  disabled={saving}
+                >
                   Cancel
                 </button>
               </div>
@@ -415,7 +565,9 @@ const Profile = () => {
                       <option value="Male">Male</option>
                       <option value="Female">Female</option>
                       <option value="Other">Other</option>
-                      <option value="Prefer not to say">Prefer not to say</option>
+                      <option value="Prefer not to say">
+                        Prefer not to say
+                      </option>
                     </select>
                   </div>
                   <div className="form-group">
@@ -476,14 +628,14 @@ const Profile = () => {
                   <label>Fitness Level:</label>
                   <span>{fitnessInfo.fitnessLevel || "Not specified"}</span>
                 </div>
-                <div className="info-item">
+                {/* <div className="info-item">
                   <label>Activity Level:</label>
                   <span>{fitnessInfo.activityLevel || "Not specified"}</span>
                 </div>
                 <div className="info-item">
                   <label>Workout Frequency:</label>
                   <span>{fitnessInfo.workoutFrequency || 0} times/week</span>
-                </div>
+                </div> */}
                 <div className="info-item col-span-2">
                   <label>Fitness Goals:</label>
                   <div className="tag-list">
@@ -497,27 +649,29 @@ const Profile = () => {
                     )}
                   </div>
                 </div>
-                <div className="info-item col-span-2">
+                {/* <div className="info-item col-span-2">
                   <label>Preferred Workouts:</label>
                   <div className="tag-list">
-                    {(fitnessInfo.preferredWorkouts || []).map((workout, idx) => (
-                      <span key={idx} className="tag">
-                        {workout}
-                      </span>
-                    ))}
+                    {(fitnessInfo.preferredWorkouts || []).map(
+                      (workout, idx) => (
+                        <span key={idx} className="tag">
+                          {workout}
+                        </span>
+                      )
+                    )}
                     {(fitnessInfo.preferredWorkouts || []).length === 0 && (
                       <span className="no-data">No preferred workouts set</span>
                     )}
                   </div>
-                </div>
-                <div className="info-item col-span-2">
+                </div> */}
+                {/* <div className="info-item col-span-2">
                   <label>Medical Conditions:</label>
                   <span>
                     {(fitnessInfo.medicalConditions || []).length > 0
                       ? fitnessInfo.medicalConditions.join(", ")
                       : "None reported"}
                   </span>
-                </div>
+                </div> */}
               </div>
             ) : (
               <div className="edit-form">
@@ -528,7 +682,12 @@ const Profile = () => {
                       id="fitnessLevel"
                       name="fitnessLevel"
                       value={fitnessInfo.fitnessLevel || ""}
-                      onChange={(e) => setFitnessInfo({...fitnessInfo, fitnessLevel: e.target.value})}
+                      onChange={(e) =>
+                        setFitnessInfo({
+                          ...fitnessInfo,
+                          fitnessLevel: e.target.value,
+                        })
+                      }
                     >
                       <option value="">Select Fitness Level</option>
                       <option value="Beginner">Beginner</option>
@@ -536,13 +695,18 @@ const Profile = () => {
                       <option value="Advanced">Advanced</option>
                     </select>
                   </div>
-                  <div className="form-group">
+                  {/* <div className="form-group">
                     <label htmlFor="activityLevel">Activity Level</label>
                     <select
                       id="activityLevel"
                       name="activityLevel"
                       value={fitnessInfo.activityLevel || ""}
-                      onChange={(e) => setFitnessInfo({...fitnessInfo, activityLevel: e.target.value})}
+                      onChange={(e) =>
+                        setFitnessInfo({
+                          ...fitnessInfo,
+                          activityLevel: e.target.value,
+                        })
+                      }
                     >
                       <option value="">Select Activity Level</option>
                       <option value="Sedentary">Sedentary</option>
@@ -553,7 +717,9 @@ const Profile = () => {
                     </select>
                   </div>
                   <div className="form-group">
-                    <label htmlFor="workoutFrequency">Workout Frequency (per week)</label>
+                    <label htmlFor="workoutFrequency">
+                      Workout Frequency (per week)
+                    </label>
                     <input
                       type="number"
                       id="workoutFrequency"
@@ -561,7 +727,12 @@ const Profile = () => {
                       min="0"
                       max="7"
                       value={fitnessInfo.workoutFrequency || ""}
-                      onChange={(e) => setFitnessInfo({...fitnessInfo, workoutFrequency: parseInt(e.target.value, 10)})}
+                      onChange={(e) =>
+                        setFitnessInfo({
+                          ...fitnessInfo,
+                          workoutFrequency: parseInt(e.target.value, 10),
+                        })
+                      }
                     />
                   </div>
                 </div>
@@ -574,7 +745,9 @@ const Profile = () => {
                         <input
                           type="checkbox"
                           id={`goal-${goal}`}
-                          checked={(fitnessInfo.fitnessGoals || []).includes(goal)}
+                          checked={(fitnessInfo.fitnessGoals || []).includes(
+                            goal
+                          )}
                           onChange={() => handleGoalChange(goal)}
                         />
                         <label htmlFor={`goal-${goal}`}>{goal}</label>
@@ -591,8 +764,12 @@ const Profile = () => {
                         <input
                           type="checkbox"
                           id={`workout-${workout}`}
-                          checked={(fitnessInfo.preferredWorkouts || []).includes(workout)}
-                          onChange={() => handleWorkoutPreferenceChange(workout)}
+                          checked={(
+                            fitnessInfo.preferredWorkouts || []
+                          ).includes(workout)}
+                          onChange={() =>
+                            handleWorkoutPreferenceChange(workout)
+                          }
                         />
                         <label htmlFor={`workout-${workout}`}>{workout}</label>
                       </div>
@@ -601,14 +778,23 @@ const Profile = () => {
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="medicalConditions">Medical Conditions (comma separated)</label>
+                  <label htmlFor="medicalConditions">
+                    Medical Conditions (comma separated)
+                  </label>
                   <textarea
                     id="medicalConditions"
                     name="medicalConditions"
                     value={(fitnessInfo.medicalConditions || []).join(", ")}
-                    onChange={(e) => setFitnessInfo({...fitnessInfo, medicalConditions: e.target.value.split(", ").filter(condition => condition.trim())})}
+                    onChange={(e) =>
+                      setFitnessInfo({
+                        ...fitnessInfo,
+                        medicalConditions: e.target.value
+                          .split(", ")
+                          .filter((condition) => condition.trim()),
+                      })
+                    }
                     rows="3"
-                  />
+                  /> */}
                 </div>
               </div>
             )}
@@ -628,39 +814,82 @@ const Profile = () => {
                 <label>Member Since:</label>
                 <span>{accountInfo.memberSince}</span>
               </div>
-              <div className="info-item">
+              {/* <div className="info-item">
                 <label>Subscription:</label>
                 <span>{accountInfo.subscription}</span>
               </div>
               <div className="info-item">
                 <label>Renewal Date:</label>
                 <span>{accountInfo.subscriptionRenewal || "N/A"}</span>
-              </div>
-              
-              {!editMode ? (
+              </div> */}
+
+              {/* {!editMode ? (
                 <>
                   <div className="info-item col-span-2">
                     <label>Notification Preferences:</label>
                     <div className="preferences-list">
-                      <span className={`preference ${accountInfo.notificationPreferences?.email ? 'active' : 'inactive'}`}>
-                        Email: {accountInfo.notificationPreferences?.email ? "On" : "Off"}
+                      <span
+                        className={`preference ${
+                          accountInfo.notificationPreferences?.email
+                            ? "active"
+                            : "inactive"
+                        }`}
+                      >
+                        Email:{" "}
+                        {accountInfo.notificationPreferences?.email
+                          ? "On"
+                          : "Off"}
                       </span>
-                      <span className={`preference ${accountInfo.notificationPreferences?.push ? 'active' : 'inactive'}`}>
-                        Push: {accountInfo.notificationPreferences?.push ? "On" : "Off"}
+                      <span
+                        className={`preference ${
+                          accountInfo.notificationPreferences?.push
+                            ? "active"
+                            : "inactive"
+                        }`}
+                      >
+                        Push:{" "}
+                        {accountInfo.notificationPreferences?.push
+                          ? "On"
+                          : "Off"}
                       </span>
-                      <span className={`preference ${accountInfo.notificationPreferences?.sms ? 'active' : 'inactive'}`}>
-                        SMS: {accountInfo.notificationPreferences?.sms ? "On" : "Off"}
+                      <span
+                        className={`preference ${
+                          accountInfo.notificationPreferences?.sms
+                            ? "active"
+                            : "inactive"
+                        }`}
+                      >
+                        SMS:{" "}
+                        {accountInfo.notificationPreferences?.sms
+                          ? "On"
+                          : "Off"}
                       </span>
                     </div>
                   </div>
                   <div className="info-item col-span-2">
                     <label>Data Sharing:</label>
                     <div className="preferences-list">
-                      <span className={`preference ${accountInfo.dataSharing?.anonymizedResearch ? 'active' : 'inactive'}`}>
-                        Research: {accountInfo.dataSharing?.anonymizedResearch ? "On" : "Off"}
+                      <span
+                        className={`preference ${
+                          accountInfo.dataSharing?.anonymizedResearch
+                            ? "active"
+                            : "inactive"
+                        }`}
+                      >
+                        Research:{" "}
+                        {accountInfo.dataSharing?.anonymizedResearch
+                          ? "On"
+                          : "Off"}
                       </span>
-                      <span className={`preference ${accountInfo.dataSharing?.thirdPartyApps ? 'active' : 'inactive'}`}>
-                        Third-party Apps: {accountInfo.dataSharing?.thirdPartyApps ? "On" : "Off"}
+                      <span
+                        className={`preference ${
+                          accountInfo.dataSharing?.thirdPartyApps
+                            ? "active"
+                            : "inactive"
+                        }`}
+                      >
+                        Third-party Apps:{" "}
+                        {accountInfo.dataSharing?.thirdPartyApps ? "On" : "Off"}
                       </span>
                     </div>
                   </div>
@@ -671,37 +900,50 @@ const Profile = () => {
                     <label>Notification Preferences:</label>
                     <div className="toggle-group">
                       <div className="toggle-item">
-                        <label htmlFor="email-notifications">Email Notifications</label>
+                        <label htmlFor="email-notifications">
+                          Email Notifications
+                        </label>
                         <div className="toggle-switch">
                           <input
                             type="checkbox"
                             id="email-notifications"
-                            checked={accountInfo.notificationPreferences?.email || false}
-                            onChange={() => handleNotificationChange('email')}
+                            checked={
+                              accountInfo.notificationPreferences?.email ||
+                              false
+                            }
+                            onChange={() => handleNotificationChange("email")}
                           />
                           <span className="toggle-slider"></span>
                         </div>
                       </div>
                       <div className="toggle-item">
-                        <label htmlFor="push-notifications">Push Notifications</label>
+                        <label htmlFor="push-notifications">
+                          Push Notifications
+                        </label>
                         <div className="toggle-switch">
                           <input
                             type="checkbox"
                             id="push-notifications"
-                            checked={accountInfo.notificationPreferences?.push || false}
-                            onChange={() => handleNotificationChange('push')}
+                            checked={
+                              accountInfo.notificationPreferences?.push || false
+                            }
+                            onChange={() => handleNotificationChange("push")}
                           />
                           <span className="toggle-slider"></span>
                         </div>
                       </div>
                       <div className="toggle-item">
-                        <label htmlFor="sms-notifications">SMS Notifications</label>
+                        <label htmlFor="sms-notifications">
+                          SMS Notifications
+                        </label>
                         <div className="toggle-switch">
                           <input
                             type="checkbox"
                             id="sms-notifications"
-                            checked={accountInfo.notificationPreferences?.sms || false}
-                            onChange={() => handleNotificationChange('sms')}
+                            checked={
+                              accountInfo.notificationPreferences?.sms || false
+                            }
+                            onChange={() => handleNotificationChange("sms")}
                           />
                           <span className="toggle-slider"></span>
                         </div>
@@ -712,25 +954,38 @@ const Profile = () => {
                     <label>Data Sharing:</label>
                     <div className="toggle-group">
                       <div className="toggle-item">
-                        <label htmlFor="research-sharing">Anonymized Research</label>
+                        <label htmlFor="research-sharing">
+                          Anonymized Research
+                        </label>
                         <div className="toggle-switch">
                           <input
                             type="checkbox"
                             id="research-sharing"
-                            checked={accountInfo.dataSharing?.anonymizedResearch || false}
-                            onChange={() => handleDataSharingChange('anonymizedResearch')}
+                            checked={
+                              accountInfo.dataSharing?.anonymizedResearch ||
+                              false
+                            }
+                            onChange={() =>
+                              handleDataSharingChange("anonymizedResearch")
+                            }
                           />
                           <span className="toggle-slider"></span>
                         </div>
                       </div>
                       <div className="toggle-item">
-                        <label htmlFor="third-party-sharing">Third-party App Integration</label>
+                        <label htmlFor="third-party-sharing">
+                          Third-party App Integration
+                        </label>
                         <div className="toggle-switch">
                           <input
                             type="checkbox"
                             id="third-party-sharing"
-                            checked={accountInfo.dataSharing?.thirdPartyApps || false}
-                            onChange={() => handleDataSharingChange('thirdPartyApps')}
+                            checked={
+                              accountInfo.dataSharing?.thirdPartyApps || false
+                            }
+                            onChange={() =>
+                              handleDataSharingChange("thirdPartyApps")
+                            }
                           />
                           <span className="toggle-slider"></span>
                         </div>
@@ -738,17 +993,20 @@ const Profile = () => {
                     </div>
                   </div>
                 </>
-              )}
+              )} */}
             </div>
           </div>
         </div>
 
         {/* Fitness Statistics Section */}
-        <div className="profile-section fitness-stats">
+        {/* Fitness Statistics Section */}
+        {/* <div className="profile-section fitness-stats">
           <h2>Fitness Statistics</h2>
           <div className="stats-grid">
             <div className="stat-card">
-              <div className="stat-value">{user.statistics?.totalWorkouts || 0}</div>
+              <div className="stat-value">
+                {user.statistics?.totalWorkouts || 0}
+              </div>
               <div className="stat-label">Total Workouts</div>
             </div>
             <div className="stat-card">
@@ -764,11 +1022,15 @@ const Profile = () => {
               <div className="stat-label">Avg. Workout (min)</div>
             </div>
             <div className="stat-card">
-              <div className="stat-value">{user.statistics?.longestStreak || 0}</div>
+              <div className="stat-value">
+                {user.statistics?.longestStreak || 0}
+              </div>
               <div className="stat-label">Longest Streak</div>
             </div>
             <div className="stat-card">
-              <div className="stat-value">{user.statistics?.currentStreak || 0}</div>
+              <div className="stat-value">
+                {user.statistics?.currentStreak || 0}
+              </div>
               <div className="stat-label">Current Streak</div>
             </div>
             <div className="stat-card">
@@ -783,7 +1045,7 @@ const Profile = () => {
             <h3>Favorite Exercise</h3>
             <p>{user.statistics?.favoriteExercise || "N/A"}</p>
           </div>
-        </div>
+        </div> */}
 
         {/* Purchased Plans Section */}
         {purchasedPlans && purchasedPlans.length > 0 && (
@@ -795,8 +1057,13 @@ const Profile = () => {
                   <h3>{plan.name}</h3>
                   <p>{plan.description}</p>
                   <div className="plan-details">
-                    <span>Purchase Date: {new Date(plan.purchaseDate).toLocaleDateString()}</span>
-                    <span>Expires: {new Date(plan.expiryDate).toLocaleDateString()}</span>
+                    <span>
+                      Purchase Date:{" "}
+                      {new Date(plan.purchaseDate).toLocaleDateString()}
+                    </span>
+                    <span>
+                      Expires: {new Date(plan.expiryDate).toLocaleDateString()}
+                    </span>
                   </div>
                 </div>
               ))}
