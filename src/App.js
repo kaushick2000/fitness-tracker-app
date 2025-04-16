@@ -19,7 +19,6 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; // Import react-toastify CSS
 import './styles/dashboard.css'; // Import dashboard CSS
 import './styles/homepage.css'; // Import homepage CSS
-import ProgressDashboard from './components/ProgressDashboard';
 import './styles/progressdashboard.css';
 import AnalyticsDashboard from './components/AnalyticsDashboard';
 import Profile from './components/Profile';
@@ -41,7 +40,6 @@ function App() {
           <Route path="/signup" element={<SignupForm />} />
           <Route path="/login" element={<LoginForm />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/progress" element={<ProgressDashboard/>} />
           <Route path="/activitylogging" element={<ActivityLogging/>} />
           <Route path="/analytics" element={<AnalyticsDashboard/>} />
           <Route path="/home" element={<HomePage />} />

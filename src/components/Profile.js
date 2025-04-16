@@ -1,11 +1,3 @@
-/* Last Name, First Name - Student ID */
-/* 
- Suresh, Kaushick ( 1002237680 ), 
- Sivaprakash, Akshay Prassanna ( 1002198274 ) ,  
- Sonwane, Pratik ( 1002170610 ) , 
- Shaik, Arfan ( 1002260039 ) , 
- Sheth, Jeet ( 1002175315 ) 
-*/
 import React, { useState, useEffect } from "react";
 import Nav from "./Nav";
 import "../styles/Profile.css";
@@ -33,6 +25,7 @@ const Profile = () => {
           return;
         }
 
+        // Fetch user profile data from the API
         const response = await fetch(`http://localhost:3000/api/profile?email=${encodeURIComponent(userEmail)}`, {
           method: "GET",
           headers: {
@@ -45,15 +38,75 @@ const Profile = () => {
           throw new Error("Failed to fetch profile data");
         }
 
-        const userData = await response.json();
-        setUser(userData);
-        setPersonalInfo(userData.personalInfo || {});
-        setFitnessInfo(userData.fitnessInfo || {});
-        setAccountInfo(userData.accountInfo || {});
-        setPurchasedPlans(userData.purchasedPlans || []);
+        const data = await response.json();
+        console.log("API response:", data);
         
-        // Save purchased plans to localStorage for use in other components
-        localStorage.setItem("purchasedPlans", JSON.stringify(userData.purchasedPlans || []));
+        // Transform API data to the format used by the frontend
+        const userData = data.user;
+        const profileData = data.profile || {};
+        
+        // Map the API data structure to our local state structure
+        setUser({
+          ...userData,
+          profile: profileData
+        });
+        
+        // Parse fitness goals from JSON if needed
+        const fitnessGoals = profileData.fitness_goals ? 
+          (Array.isArray(profileData.fitness_goals) ? profileData.fitness_goals : JSON.parse(profileData.fitness_goals)) : 
+          [];
+          
+        // Transform to frontend data structure
+        setPersonalInfo({
+          firstName: userData.name?.split(' ')[0] || '',
+          lastName: userData.name?.split(' ')[1] || '',
+          email: userData.email || '',
+          phoneNumber: userData.phone || '',
+          gender: profileData.gender || '',
+          birthdate: profileData.birthday ? new Date(profileData.birthday).toISOString().split('T')[0] : '',
+          height: profileData.height || '',
+          currentWeight: profileData.curr_weight || '',
+          goalWeight: profileData.goal_weight || '',
+          profileImage: profileData.profile_pic || null
+        });
+        
+        setFitnessInfo({
+          fitnessLevel: profileData.fitness_level || '',
+          activityLevel: '', // Not in the schema, but used in frontend
+          workoutFrequency: 3, // Default value
+          fitnessGoals: fitnessGoals,
+          preferredWorkouts: [], // Not in schema, but used in frontend
+          medicalConditions: [] // Not in schema, but used in frontend
+        });
+        
+        setAccountInfo({
+          username: userData.email?.split('@')[0] || '',
+          memberSince: new Date(userData.created_at).toLocaleDateString() || '',
+          subscription: userData.paid ? 'Premium' : 'Free',
+          subscriptionRenewal: '',
+          notificationPreferences: {
+            email: true,
+            push: false,
+            sms: false
+          },
+          dataSharing: {
+            anonymizedResearch: false,
+            thirdPartyApps: false
+          }
+        });
+        
+        // Mock purchased plans (not in current API data)
+        const mockPlans = userData.paid ? [{
+          name: "Premium Fitness Plan",
+          description: "Full access to all workouts and nutrition guides",
+          purchaseDate: new Date().setMonth(new Date().getMonth() - 1),
+          expiryDate: new Date().setMonth(new Date().getMonth() + 11)
+        }] : [];
+        
+        setPurchasedPlans(mockPlans);
+        
+        // Save purchased plans to localStorage
+        localStorage.setItem("purchasedPlans", JSON.stringify(mockPlans));
       } catch (err) {
         console.error("Error fetching profile:", err);
         setError(err.message || "Failed to load profile data");
@@ -117,35 +170,47 @@ const Profile = () => {
         return;
       }
 
+      // Transform our frontend data structure to the API expected format
+      const userData = {
+        name: `${personalInfo.firstName} ${personalInfo.lastName}`.trim(),
+        phone: personalInfo.phoneNumber
+      };
+      
       const profileData = {
-        personalInfo,
-        fitnessInfo,
-        accountInfo,
-        statistics: user.statistics || {},
+        gender: personalInfo.gender,
+        birthday: personalInfo.birthdate,
+        curr_height: personalInfo.height,
+        curr_weight: personalInfo.currentWeight,
+        goal_weight: personalInfo.goalWeight,
+        fitness_level: fitnessInfo.fitnessLevel?.toUpperCase() || "BEGINNER",
+        fitness_goals: fitnessInfo.fitnessGoals || [],
+        profile_pic: personalInfo.profileImage
       };
 
-      const response = await fetch("http://localhost:3000/api/profile", {
+      // Send the updated data to the API
+      const response = await fetch(`http://localhost:3000/api/profile?email=${encodeURIComponent(userEmail)}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         credentials: "include",
         body: JSON.stringify({
-          email: userEmail,
-          profileData,
+          user: userData,
+          profile: profileData
         }),
       });
 
       if (!response.ok) {
         throw new Error("Failed to update profile");
       }
-
+      
+      const result = await response.json();
+      console.log("Update result:", result);
+      
       // Update the user state with new data
-      setUser((prev) => ({
+      setUser(prev => ({
         ...prev,
-        personalInfo,
-        fitnessInfo,
-        accountInfo,
+        ...result.user
       }));
       
       setEditMode(false);
@@ -158,9 +223,23 @@ const Profile = () => {
 
   const handleCancel = () => {
     // Reset form to current user data
-    setPersonalInfo(user.personalInfo || {});
-    setFitnessInfo(user.fitnessInfo || {});
-    setAccountInfo(user.accountInfo || {});
+    const userData = user;
+    const profileData = user.profile || {};
+    
+    // Transform back to frontend data structure
+    setPersonalInfo({
+      firstName: userData.name?.split(' ')[0] || '',
+      lastName: userData.name?.split(' ')[1] || '',
+      email: userData.email || '',
+      phoneNumber: userData.phone || '',
+      gender: profileData.gender || '',
+      birthdate: profileData.birthday ? new Date(profileData.birthday).toISOString().split('T')[0] : '',
+      height: profileData.height || '',
+      currentWeight: profileData.curr_weight || '',
+      goalWeight: profileData.goal_weight || '',
+      profileImage: profileData.profile_pic || null
+    });
+    
     setEditMode(false);
   };
 
@@ -455,7 +534,6 @@ const Profile = () => {
                       <option value="Beginner">Beginner</option>
                       <option value="Intermediate">Intermediate</option>
                       <option value="Advanced">Advanced</option>
-                      <option value="Athletic">Athletic</option>
                     </select>
                   </div>
                   <div className="form-group">

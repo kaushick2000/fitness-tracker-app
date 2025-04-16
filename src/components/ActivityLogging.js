@@ -144,41 +144,37 @@ const ActivityLogging = () => {
                     className="exercise-item "
                   >
                     <div className="exercise-title">{exercise.title}</div>
-                      <div className="exercise-details">
-                        {exercise.equipment && (
-                          <span className="equipment">
-                            {exercise.equipment}
-                          </span>
-                        )}
-                        {exercise.rating > 0 && (
-                          <span className="rating">
-                            <span className="stars">
-                              {"★".repeat(Math.round(exercise.rating / 2))}
-                            </span>
-                            <span className="rating-value">
-                              ({exercise.rating})
-                            </span>
-                          </span>
-                        )}
-                      </div>
-                      {exercise.description && (
-                        <div className="exercise-description">
-                          {exercise.description}
-                        </div>
+                    <div className="exercise-details">
+                      {exercise.equipment && (
+                        <span className="equipment">{exercise.equipment}</span>
                       )}
-                      {exercise.youtube_video && (
-                        <a
-                          href={exercise.youtube_video}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="video-link"
-                        >
-                          Watch Video Tutorial
-                        </a>
+                      {exercise.rating > 0 && (
+                        <span className="rating">
+                          <span className="stars">
+                            {"★".repeat(Math.round(exercise.rating / 2))}
+                          </span>
+                          <span className="rating-value">
+                            ({exercise.rating})
+                          </span>
+                        </span>
                       )}
-                    <div className="exercise-info ">
-                      
                     </div>
+                    {exercise.description && (
+                      <div className="exercise-description">
+                        {exercise.description}
+                      </div>
+                    )}
+                    {exercise.youtube_video && (
+                      <a
+                        href={exercise.youtube_video}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="video-link"
+                      >
+                        Watch Video Tutorial
+                      </a>
+                    )}
+                    <div className="exercise-info "></div>
 
                     <div className="exercise-type-level">
                       <div className="exercise-type">
@@ -1159,20 +1155,6 @@ const ActivityLogging = () => {
             max={new Date().toISOString().split("T")[0]}
             className="date-input"
           />
-          <div className="view-toggle">
-            <button
-              className={`toggle-button ${!viewHistory ? "active" : ""}`}
-              onClick={() => setViewHistory(false)}
-            >
-              Plan
-            </button>
-            <button
-              className={`toggle-button ${viewHistory ? "active" : ""}`}
-              onClick={() => setViewHistory(true)}
-            >
-              History
-            </button>
-          </div>
         </div>
 
         {!viewHistory ? (

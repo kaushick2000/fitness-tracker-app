@@ -1,110 +1,52 @@
-/* Last Name, First Name - Student ID */
-/* 
- Suresh, Kaushick ( 1002237680 ), 
- Sivaprakash, Akshay Prassanna ( 1002198274 ) ,  
- Sonwane, Pratik ( 1002170610 ) , 
- Shaik, Arfan ( 1002260039 ) , 
- Sheth, Jeet ( 1002175315 ) 
-*/
+// Dashboard.js
 import React, { useState, useEffect } from "react";
-import homepageimg2 from "../assets/homepageimg2.jpg";
 import Nav from "../components/Nav";
 import {
-  BarChart,
-  Bar,
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
+  BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid,
+  Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell
 } from "recharts";
-import NutritionVisualization from "./NutritionVisualization";
-const mockProgressData = [
-  {
-    month: "Jan",
-    weight: 180,
-    steps: 5000,
-    calories: 2200,
-    workoutDuration: 45,
-  },
-  {
-    month: "Feb",
-    weight: 175,
-    steps: 6000,
-    calories: 2100,
-    workoutDuration: 60,
-  },
-  {
-    month: "Mar",
-    weight: 170,
-    steps: 7000,
-    calories: 2000,
-    workoutDuration: 75,
-  },
-  {
-    month: "Apr",
-    weight: 168,
-    steps: 8000,
-    calories: 1900,
-    workoutDuration: 90,
-  },
-  {
-    month: "May",
-    weight: 165,
-    steps: 8500,
-    calories: 1850,
-    workoutDuration: 95,
-  },
-  {
-    month: "Jun",
-    weight: 163,
-    steps: 9000,
-    calories: 1800,
-    workoutDuration: 100,
-  },
-  {
-    month: "Jul",
-    weight: 160,
-    steps: 9500,
-    calories: 1750,
-    workoutDuration: 105,
-  },
-];
-
-const weeklyActivityData = [
-  { day: "Mon", minutes: 30 },
-  { day: "Tue", minutes: 45 },
-  { day: "Wed", minutes: 25 },
-  { day: "Thu", minutes: 60 },
-  { day: "Fri", minutes: 90 },
-  { day: "Sat", minutes: 20 },
-  { day: "Sun", minutes: 15 },
-];
-
-const workoutTypeData = [
-  { name: "Cardio", value: 30 },
-  { name: "Stretching", value: 40 },
-  { name: "Weights", value: 15 },
-  { name: "Strength", value: 25 },
-];
+import "../styles/CombinedDashboard.css";
+import { fetchDashboardData } from "./utils/dashboardService";
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
-const FitnessDashboard = () => {
+const Dashboard = () => {
+  const [dashboardData, setDashboardData] = useState({
+    topMetrics: null,
+    progressData: [],
+    weeklyActivityData: [],
+    workoutTypeData: [],
+    aiInsights: [],
+    userData: null
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [selectedMetrics, setSelectedMetrics] = useState({
     weight: true,
     steps: true,
     calories: true,
     workoutDuration: false,
   });
-
   const [chartType, setChartType] = useState("bar");
+
+  // Fetch dashboard data on component mount
+  useEffect(() => {
+    async function loadDashboardData() {
+      try {
+        setLoading(true);
+        const userId = localStorage.getItem('userId') || '1'; // Default to user ID 1 if none stored
+        const data = await fetchDashboardData(userId);
+        setDashboardData(data);
+        setLoading(false);
+      } catch (err) {
+        console.error("Failed to load dashboard data:", err);
+        setError(err.message || "Failed to load dashboard data");
+        setLoading(false);
+      }
+    }
+    
+    loadDashboardData();
+  }, []);
 
   const toggleMetric = (metric) => {
     setSelectedMetrics((prev) => ({
@@ -113,188 +55,187 @@ const FitnessDashboard = () => {
     }));
   };
 
-  const getVisibleMetrics = () => {
-    return Object.keys(selectedMetrics).filter(
-      (metric) => selectedMetrics[metric]
-    );
-  };
+  const getVisibleMetrics = () =>
+    Object.keys(selectedMetrics).filter((metric) => selectedMetrics[metric]);
 
   const renderTopMetrics = () => {
-    const latestData = mockProgressData[mockProgressData.length - 1];
+    if (loading) return <div className="loading">Loading metrics...</div>;
+    
+    const { topMetrics } = dashboardData;
+    
     return (
       <div className="top-metrics">
         <div className="metric-card weight">
-          <span className="metric-icon">⚖️</span>
           <div className="metric-content">
             <h3>Weight</h3>
-            <div className="metric-value">{latestData.weight} lbs</div>
-            <div className="metric-progress">11% decrease since start</div>
+            <div className="metric-value">{topMetrics.weight.value} {topMetrics.weight.unit}</div>
           </div>
         </div>
-
         <div className="metric-card steps">
-          <span className="metric-icon">👣</span>
           <div className="metric-content">
             <h3>Steps</h3>
-            <div className="metric-value">
-              {latestData.steps.toLocaleString()}
-            </div>
-            <div className="metric-progress">50% of your goal</div>
+            <div className="metric-value">{topMetrics.steps.value}</div>
           </div>
         </div>
-
         <div className="metric-card calories">
-          <span className="metric-icon">💦</span>
           <div className="metric-content">
             <h3>Calories</h3>
-            <div className="calories-gauge">
-              <span>{latestData.calories}</span>
-              <span>Intake</span>
-            </div>
+            <div className="metric-value">{topMetrics.calories.value} {topMetrics.calories.unit}</div>
           </div>
         </div>
       </div>
     );
   };
 
-  const renderMonthlyProgress = () => {
+  const renderAIInsights = () => {
+    if (loading) return <div className="loading">Loading insights...</div>;
+    
+    const { aiInsights } = dashboardData;
+    
     return (
-      <div className="monthly-progress">
-        <h3>Monthly Progress</h3>
-        <div className="progress-circle-container">
-          <div className="big-progress-circle">
-            <span className="progress-percentage">80%</span>
-          </div>
-          <div className="progress-text">
-            You have achieved 80% of your goal this month.
-          </div>
-        </div>
+      <div className="ai-insights">
+        <h3>AI Insights</h3>
+        <ul>
+          {aiInsights.map((insight, index) => (
+            <li key={index}>{insight}</li>
+          ))}
+        </ul>
       </div>
     );
   };
 
-  const renderActivityChart = () => {
-    return (
-      <div className="activity-section">
-        <div className="section-header">
-          <h3>Activity</h3>
-          <div className="period-selector">
-            <span>Weekly</span>
-            <span className="dropdown-icon">▼</span>
-          </div>
-        </div>
-        <ResponsiveContainer width="100%" height={200}>
-          <BarChart data={weeklyActivityData}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} />
-            <XAxis dataKey="day" axisLine={false} tickLine={false} />
-            <YAxis hide={true} />
+  const renderChart = () => {
+    if (loading) return <div className="loading">Loading chart...</div>;
+    
+    const { progressData } = dashboardData;
+    const visibleMetrics = getVisibleMetrics();
+    
+    if (chartType === "bar") {
+      return (
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={progressData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="month" />
+            <YAxis />
             <Tooltip />
-            <Bar dataKey="minutes" fill="#FF8042" radius={[5, 5, 0, 0]} />
+            <Legend />
+            {visibleMetrics.map((metric) => (
+              <Bar key={metric} dataKey={metric} fill={COLORS[visibleMetrics.indexOf(metric) % COLORS.length]} />
+            ))}
           </BarChart>
         </ResponsiveContainer>
-      </div>
-    );
-  };
-
-  const renderProgressDonut = () => {
+      );
+    }
+    
     return (
-      <div className="progress-section">
-        <div className="section-header">
-          <h3>Progress</h3>
-          <div className="period-selector">
-            <span>Weekly</span>
-            <span className="dropdown-icon">▼</span>
-          </div>
-        </div>
-        <div className="donut-container">
-          <ResponsiveContainer width="100%" height={200}>
-            <PieChart>
-              <Pie
-                data={workoutTypeData}
-                cx="50%"
-                cy="50%"
-                innerRadius={60}
-                outerRadius={80}
-                paddingAngle={5}
-                dataKey="value"
-              >
-                {workoutTypeData.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={COLORS[index % COLORS.length]}
-                  />
-                ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
-          <div className="donut-center">
-            <span>40</span>
-            <span>hrs</span>
-          </div>
-          <div className="workout-types">
-            {workoutTypeData.map((type, index) => (
-              <div key={index} className="workout-type">
-                <span
-                  className="type-dot"
-                  style={{ backgroundColor: COLORS[index] }}
-                ></span>
-                <span className="type-name">{type.name}</span>
-                <span className="type-value">{type.value} hrs</span>
-              </div>
-            ))}
-          </div>
+      <ResponsiveContainer width="100%" height={300}>
+        <LineChart data={progressData}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="month" />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          {visibleMetrics.map((metric) => (
+            <Line key={metric} type="monotone" dataKey={metric} stroke={COLORS[visibleMetrics.indexOf(metric) % COLORS.length]} />
+          ))}
+        </LineChart>
+      </ResponsiveContainer>
+    );
+  };
+
+  if (error) {
+    return (
+      <div className="app-container">
+        <Nav />
+        <div className="error-container">
+          <h2>Error loading dashboard</h2>
+          <p>{error}</p>
+          <button onClick={() => window.location.reload()} className="retry-button">Retry</button>
         </div>
       </div>
     );
-  };
-  const [purchasedPlans, setPurchasedPlans] = useState(() => {
-    const savedPlans = localStorage.getItem("purchasedPlans");
-    return savedPlans ? JSON.parse(savedPlans) : [];
-  });
+  }
 
-  useEffect(() => {
-    localStorage.setItem("purchasedPlans", JSON.stringify(purchasedPlans));
-  }, [purchasedPlans]);
   return (
     <div className="app-container">
-      {/* Move Nav component outside the dashboard content */}
-      <Nav purchasedPlans={purchasedPlans} />
-      <div className="dashboard-container dashboard-wrapper-new">
+      <Nav />
+      <div className="dashboard-container">
         <div className="dashboard-header">
           <div className="greeting-section">
-            <h2>Welcome Back ⭐</h2>
+            <h2>Welcome to Your Fitness Dashboard
+              {dashboardData.userData?.personalInfo?.firstName ? 
+                `, ${dashboardData.userData.personalInfo.firstName}` : ''}
+            </h2>
+            <p>Track your progress and stay motivated!</p>
           </div>
         </div>
-
         <div className="dashboard-content">
+          {renderTopMetrics()}
           <div className="main-content">
             <div className="center-content">
-              {renderTopMetrics()}
-
-              <div className="dashboard-grid">
-                <div className="grid-item activity">
-                  {renderActivityChart()}
-                </div>
-                <div className="grid-item progress">
-                  {renderProgressDonut()}
-                </div>
-                <div className="grid-item progress">
-                  <div className="nutrition-visualization-section">
-                    <h2>Track Your Nutrition Journey</h2>
-                    <p className="section-description">
-                      Monitor your calorie intake and macro distribution with
-                      our intuitive visualizations
-                    </p>
-                    <div className="nutrition-visualization-wrapper">
-                      <NutritionVisualization />
-                    </div>
-                  </div>
+              <div className="metrics-selector">
+                <h2>Select Metrics</h2>
+                <div className="metrics-grid">
+                  {Object.keys(selectedMetrics).map((metric) => (
+                    <label key={metric} className="metric-checkbox">
+                      <input
+                        type="checkbox"
+                        checked={selectedMetrics[metric]}
+                        onChange={() => toggleMetric(metric)}
+                      />
+                      {metric.charAt(0).toUpperCase() + metric.slice(1).replace(/([A-Z])/g, ' $1')}
+                    </label>
+                  ))}
                 </div>
               </div>
+              <div className="chart-section">
+                <div className="chart-header">
+                  <h2>Progress Over Time</h2>
+                  <div className="chart-controls">
+                    <label>
+                      Chart Type:
+                      <select value={chartType} onChange={(e) => setChartType(e.target.value)}>
+                        <option value="bar">Bar</option>
+                        <option value="line">Line</option>
+                      </select>
+                    </label>
+                  </div>
+                </div>
+                <div className="chart-container">{renderChart()}</div>
+              </div>
+              <div className="insights-section">{renderAIInsights()}</div>
             </div>
-
-            <div className="right-sidebar">{renderMonthlyProgress()}</div>
+            <div className="right-sidebar">
+              <div className="monthly-progress">
+                <h3>Weekly Activity</h3>
+                <ResponsiveContainer width="100%" height={200}>
+                  <BarChart data={dashboardData.weeklyActivityData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="day" />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey="minutes" fill="#0088FE" />
+                  </BarChart>
+                </ResponsiveContainer>
+                <h3>Workout Types</h3>
+                <PieChart width={200} height={200}>
+                  <Pie
+                    data={dashboardData.workoutTypeData}
+                    cx={100}
+                    cy={100}
+                    labelLine={false}
+                    outerRadius={80}
+                    fill="#8884d8"
+                    dataKey="value"
+                  >
+                    {dashboardData.workoutTypeData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -302,4 +243,4 @@ const FitnessDashboard = () => {
   );
 };
 
-export default FitnessDashboard;
+export default Dashboard;

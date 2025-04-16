@@ -23,7 +23,6 @@ const Nav = ({ purchasedPlans = [] }) => {
     if (path.includes("home")) return "home";
     if (path.includes("dashboard")) return "dashboard";
     if (path.includes("activitylogging")) return "activity";
-    if (path.includes("progress")) return "progress";
     if (path.includes("analytics")) return "analytics";
     if (path.includes("plans")) return "plans";
     if (path.includes("profile")) return "profile";
@@ -47,7 +46,6 @@ const Nav = ({ purchasedPlans = [] }) => {
     if (path.includes("home")) setActiveNavItem("home");
     else if (path.includes("dashboard")) setActiveNavItem("dashboard");
     else if (path.includes("activitylogging")) setActiveNavItem("activity");
-    else if (path.includes("progress")) setActiveNavItem("progress");
     else if (path.includes("analytics")) setActiveNavItem("analytics");
     else if (path.includes("plans")) setActiveNavItem("plans");
     else if (path.includes("profile")) setActiveNavItem("profile");
@@ -88,9 +86,6 @@ const Nav = ({ purchasedPlans = [] }) => {
         break;
       case "activity":
         navigate("/activitylogging");
-        break;
-      case "progress":
-        navigate("/progress");
         break;
       case "plans":
         navigate("/plans");
@@ -163,15 +158,6 @@ const Nav = ({ purchasedPlans = [] }) => {
           >
             <span className="nav-icon">🏃</span>
             <span>Activity</span>
-          </a>
-          <a
-            className={`nav-item ${
-              activeNavItem === "progress" ? "active" : ""
-            }`}
-            onClick={() => handleNavigation("progress")}
-          >
-            <span className="nav-icon">📈</span>
-            <span>Progress</span>
           </a>
           <a
             className={`nav-item ${
