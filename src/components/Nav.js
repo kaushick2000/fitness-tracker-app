@@ -61,6 +61,8 @@ const Nav = ({ purchasedPlans = [] }) => {
   const handleLogout = async () => {
     const auth = getAuth();
     try {
+      localStorage.removeItem("userId"); // Clear user ID from local storage
+      localStorage.removeItem("userEmail"); // Clear user name from local storage
       await signOut(auth);
       navigate("/login"); // or wherever you want to redirect after logout
       toast.success("Logged out successfully");

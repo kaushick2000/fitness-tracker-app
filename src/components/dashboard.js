@@ -2,8 +2,19 @@
 import React, { useState, useEffect } from "react";
 import Nav from "../components/Nav";
 import {
-  BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid,
-  Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell
+  BarChart,
+  Bar,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
 } from "recharts";
 import "../styles/CombinedDashboard.css";
 import { fetchDashboardData } from "./utils/dashboardService";
@@ -17,7 +28,7 @@ const Dashboard = () => {
     weeklyActivityData: [],
     workoutTypeData: [],
     aiInsights: [],
-    userData: null
+    userData: null,
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -34,7 +45,7 @@ const Dashboard = () => {
     async function loadDashboardData() {
       try {
         setLoading(true);
-        const userId = localStorage.getItem('userId') || '1'; // Default to user ID 1 if none stored
+        const userId = localStorage.getItem("userId") || "1"; // Default to user ID 1 if none stored
         const data = await fetchDashboardData(userId);
         setDashboardData(data);
         setLoading(false);
@@ -44,7 +55,7 @@ const Dashboard = () => {
         setLoading(false);
       }
     }
-    
+
     loadDashboardData();
   }, []);
 
@@ -60,15 +71,17 @@ const Dashboard = () => {
 
   const renderTopMetrics = () => {
     if (loading) return <div className="loading">Loading metrics...</div>;
-    
+
     const { topMetrics } = dashboardData;
-    
+
     return (
       <div className="top-metrics">
         <div className="metric-card weight">
           <div className="metric-content">
             <h3>Weight</h3>
-            <div className="metric-value">{topMetrics.weight.value} {topMetrics.weight.unit}</div>
+            <div className="metric-value">
+              {topMetrics.weight.value} {topMetrics.weight.unit}
+            </div>
           </div>
         </div>
         <div className="metric-card steps">
@@ -80,7 +93,9 @@ const Dashboard = () => {
         <div className="metric-card calories">
           <div className="metric-content">
             <h3>Calories</h3>
-            <div className="metric-value">{topMetrics.calories.value} {topMetrics.calories.unit}</div>
+            <div className="metric-value">
+              {topMetrics.calories.value} {topMetrics.calories.unit}
+            </div>
           </div>
         </div>
       </div>
@@ -89,9 +104,9 @@ const Dashboard = () => {
 
   const renderAIInsights = () => {
     if (loading) return <div className="loading">Loading insights...</div>;
-    
+
     const { aiInsights } = dashboardData;
-    
+
     return (
       <div className="ai-insights">
         <h3>AI Insights</h3>
@@ -106,10 +121,10 @@ const Dashboard = () => {
 
   const renderChart = () => {
     if (loading) return <div className="loading">Loading chart...</div>;
-    
+
     const { progressData } = dashboardData;
     const visibleMetrics = getVisibleMetrics();
-    
+
     if (chartType === "bar") {
       return (
         <ResponsiveContainer width="100%" height={300}>
@@ -120,13 +135,17 @@ const Dashboard = () => {
             <Tooltip />
             <Legend />
             {visibleMetrics.map((metric) => (
-              <Bar key={metric} dataKey={metric} fill={COLORS[visibleMetrics.indexOf(metric) % COLORS.length]} />
+              <Bar
+                key={metric}
+                dataKey={metric}
+                fill={COLORS[visibleMetrics.indexOf(metric) % COLORS.length]}
+              />
             ))}
           </BarChart>
         </ResponsiveContainer>
       );
     }
-    
+
     return (
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={progressData}>
@@ -136,7 +155,12 @@ const Dashboard = () => {
           <Tooltip />
           <Legend />
           {visibleMetrics.map((metric) => (
-            <Line key={metric} type="monotone" dataKey={metric} stroke={COLORS[visibleMetrics.indexOf(metric) % COLORS.length]} />
+            <Line
+              key={metric}
+              type="monotone"
+              dataKey={metric}
+              stroke={COLORS[visibleMetrics.indexOf(metric) % COLORS.length]}
+            />
           ))}
         </LineChart>
       </ResponsiveContainer>
@@ -150,7 +174,12 @@ const Dashboard = () => {
         <div className="error-container">
           <h2>Error loading dashboard</h2>
           <p>{error}</p>
-          <button onClick={() => window.location.reload()} className="retry-button">Retry</button>
+          <button
+            onClick={() => window.location.reload()}
+            className="retry-button"
+          >
+            Retry
+          </button>
         </div>
       </div>
     );
@@ -162,9 +191,11 @@ const Dashboard = () => {
       <div className="dashboard-container">
         <div className="dashboard-header">
           <div className="greeting-section">
-            <h2>Welcome to Your Fitness Dashboard
-              {dashboardData.userData?.personalInfo?.firstName ? 
-                `, ${dashboardData.userData.personalInfo.firstName}` : ''}
+            <h2>
+              Welcome to Your Fitness Dashboard
+              {dashboardData.userData?.personalInfo?.firstName
+                ? `, ${dashboardData.userData.personalInfo.firstName}`
+                : ""}
             </h2>
             <p>Track your progress and stay motivated!</p>
           </div>
@@ -173,28 +204,16 @@ const Dashboard = () => {
           {renderTopMetrics()}
           <div className="main-content">
             <div className="center-content">
-              <div className="metrics-selector">
-                <h2>Select Metrics</h2>
-                <div className="metrics-grid">
-                  {Object.keys(selectedMetrics).map((metric) => (
-                    <label key={metric} className="metric-checkbox">
-                      <input
-                        type="checkbox"
-                        checked={selectedMetrics[metric]}
-                        onChange={() => toggleMetric(metric)}
-                      />
-                      {metric.charAt(0).toUpperCase() + metric.slice(1).replace(/([A-Z])/g, ' $1')}
-                    </label>
-                  ))}
-                </div>
-              </div>
               <div className="chart-section">
                 <div className="chart-header">
                   <h2>Progress Over Time</h2>
                   <div className="chart-controls">
                     <label>
                       Chart Type:
-                      <select value={chartType} onChange={(e) => setChartType(e.target.value)}>
+                      <select
+                        value={chartType}
+                        onChange={(e) => setChartType(e.target.value)}
+                      >
                         <option value="bar">Bar</option>
                         <option value="line">Line</option>
                       </select>
@@ -204,8 +223,6 @@ const Dashboard = () => {
                 <div className="chart-container">{renderChart()}</div>
               </div>
               <div className="insights-section">{renderAIInsights()}</div>
-            </div>
-            <div className="right-sidebar">
               <div className="monthly-progress">
                 <h3>Weekly Activity</h3>
                 <ResponsiveContainer width="100%" height={200}>
@@ -217,7 +234,27 @@ const Dashboard = () => {
                     <Bar dataKey="minutes" fill="#0088FE" />
                   </BarChart>
                 </ResponsiveContainer>
-                <h3>Workout Types</h3>
+                
+              </div>
+            </div>
+            <div className="right-sidebar">
+              <div className="metrics-selector">
+                <h2>Select Metrics</h2>
+                <div className="metrics-grid">
+                  {Object.keys(selectedMetrics).map((metric) => (
+                    <label key={metric} className="metric-checkbox">
+                      <input
+                        type="checkbox"
+                        checked={selectedMetrics[metric]}
+                        onChange={() => toggleMetric(metric)}
+                      />
+                      {metric.charAt(0).toUpperCase() +
+                        metric.slice(1).replace(/([A-Z])/g, " $1")}
+                    </label>
+                  ))}
+                </div>
+              </div>
+              <h3>Workout Types</h3>
                 <PieChart width={200} height={200}>
                   <Pie
                     data={dashboardData.workoutTypeData}
@@ -229,12 +266,14 @@ const Dashboard = () => {
                     dataKey="value"
                   >
                     {dashboardData.workoutTypeData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
                     ))}
                   </Pie>
                   <Tooltip />
                 </PieChart>
-              </div>
             </div>
           </div>
         </div>
