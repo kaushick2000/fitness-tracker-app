@@ -2,7 +2,7 @@
 
 // Use environment variables in production - not hardcoded
 const API_KEY =
-  "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";
+  "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";
 const MODEL = "nvidia/llama-3.1-nemotron-nano-8b-v1:free";
 const API_URL = "https://openrouter.ai/api/v1/chat/completions";
 

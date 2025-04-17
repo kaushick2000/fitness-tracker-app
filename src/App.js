@@ -9,10 +9,10 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
-import './components/Firebase'; // Import Firebase initialization
+import './components/firebase'; // Import Firebase initialization
 import SignupForm from './components/signup';
 import LoginForm from './components/login';
-import Dashboard from './components/Dashboard';
+import Dashboard from './components/dashboard';
 import ActivityLogging from './components/ActivityLogging';
 import HomePage from './components/HomePage'; // Import the new HomePage component
 import { ToastContainer } from 'react-toastify';
