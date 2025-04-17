@@ -72,7 +72,6 @@ const Dashboard = () => {
         setLoading(false);
       }
     }
-
     loadDashboardData();
   }, []);
 

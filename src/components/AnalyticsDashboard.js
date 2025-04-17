@@ -18,6 +18,10 @@ import {
 } from "recharts";
 import "../styles/AnalyticsDashboard.css";
 import Nav from "./Nav";
+import { 
+  generateFitnessInsights, 
+  generateExerciseRecommendations 
+} from "./OpenRouter/NVIDIA_Api"; // Import API functions
 
 const AnalyticsDashboard = ({ userData }) => {
   const [timeFrame, setTimeFrame] = useState("weekly");
@@ -40,6 +44,16 @@ const AnalyticsDashboard = ({ userData }) => {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  
+  // State for AI insights and recommended exercises
+  const [aiInsights, setAiInsights] = useState({
+    performancePatterns: "",
+    recoveryAnalysis: "",
+    nutritionImpact: ""
+  });
+  const [recommendedExercises, setRecommendedExercises] = useState([]);
+  const [insightsLoading, setInsightsLoading] = useState(false);
+  const [exercisesLoading, setExercisesLoading] = useState(false);
 
   // Fetch analytics data from the API
   useEffect(() => {
@@ -69,6 +83,10 @@ const AnalyticsDashboard = ({ userData }) => {
         const data = await response.json();
         setAnalyticsData(data);
         setLoading(false);
+        
+        // After getting analytics data, fetch AI insights and recommendations
+        fetchAiInsights(data);
+        fetchExerciseRecommendations(data, bodyPartFilter);
       } catch (err) {
         console.error("Error fetching analytics data:", err);
         setError(err.message);
@@ -78,6 +96,87 @@ const AnalyticsDashboard = ({ userData }) => {
     
     fetchAnalyticsData();
   }, [timeFrame]); // Re-fetch when timeFrame changes
+  
+  // Fetch exercise recommendations when body part filter changes
+  useEffect(() => {
+    if (!loading && !error && analyticsData) {
+      fetchExerciseRecommendations(analyticsData, bodyPartFilter);
+    }
+  }, [bodyPartFilter]);
+
+  // Function to fetch AI insights
+  const fetchAiInsights = async (data) => {
+    try {
+      setInsightsLoading(true);
+      const insights = await generateFitnessInsights(data);
+      setAiInsights(insights);
+    } catch (err) {
+      console.error("Error fetching AI insights:", err);
+      // Set default insights in case of error
+      setAiInsights({
+        performancePatterns: "Your workouts are most effective on weekday mornings. Schedule high-intensity sessions between 7-9am for optimal results.",
+        recoveryAnalysis: "You're showing signs of needing additional recovery time. Consider adding an extra rest day this week.",
+        nutritionImpact: "Your performance drops on days with less than 100g of protein intake. Consider increasing protein consumption."
+      });
+    } finally {
+      setInsightsLoading(false);
+    }
+  };
+
+  // Function to fetch exercise recommendations
+  const fetchExerciseRecommendations = async (data, bodyPart) => {
+    try {
+      setExercisesLoading(true);
+      const userId = localStorage.getItem("userId");
+      const userDataResponse = await fetch(`http://localhost:3000/api/user/${userId}`);
+      
+      if (!userDataResponse.ok) {
+        throw new Error("Failed to fetch user data");
+      }
+      
+      const userData = await userDataResponse.json();
+      
+      // Combine user data with analytics for better recommendations
+      const combinedData = {
+        userData,
+        analyticsData: data
+      };
+      
+      const recommendations = await generateExerciseRecommendations(combinedData, bodyPart);
+      setRecommendedExercises(recommendations);
+    } catch (err) {
+      console.error("Error fetching exercise recommendations:", err);
+      // Set default recommendations in case of error
+      setRecommendedExercises([
+        {
+          title: "Bulgarian Split Squats",
+          bodyPart: "Legs",
+          type: "Strength",
+          level: "Intermediate",
+          description: "Great unilateral exercise for developing leg strength and balance. Targets quads, glutes, and hamstrings effectively.",
+          youtube_video: "https://www.youtube.com/watch?v=2C-uNgKwPLE"
+        },
+        {
+          title: "Incline Dumbbell Press",
+          bodyPart: "Chest",
+          type: "Strength",
+          level: "Intermediate",
+          description: "Targets the upper chest muscles more effectively than flat bench press. Good for developing chest definition.",
+          youtube_video: "https://www.youtube.com/watch?v=8iPEnn-ltC8"
+        },
+        {
+          title: "Kettlebell Swings",
+          bodyPart: "Full Body",
+          type: "Cardio/Strength",
+          level: "Beginner",
+          description: "Excellent exercise for cardiovascular fitness and posterior chain development. Burns calories while building strength.",
+          youtube_video: "https://www.youtube.com/watch?v=YSxHifyI6s8"
+        }
+      ]);
+    } finally {
+      setExercisesLoading(false);
+    }
+  };
 
   // Get time data based on selected metric
   const getTimeData = () => {
@@ -97,15 +196,15 @@ const AnalyticsDashboard = ({ userData }) => {
 
   // Get filtered exercises based on selected body part
   const getFilteredExercises = () => {
-    if (loading || error || !analyticsData.exerciseRecommendations) return [];
-    
-    if (bodyPartFilter === "All") {
-      return analyticsData.exerciseRecommendations;
-    } else {
-      return analyticsData.exerciseRecommendations.filter(
-        exercise => exercise.bodyPart === bodyPartFilter
-      );
+    if (exercisesLoading) {
+      return [{ title: "Loading recommendations..." }];
     }
+    
+    if (recommendedExercises.length === 0) {
+      return [{ title: "No recommendations available for this filter." }];
+    }
+    
+    return recommendedExercises;
   };
 
   // Colors for charts
@@ -315,56 +414,61 @@ const AnalyticsDashboard = ({ userData }) => {
             exercises:
           </p>
           <div className="exercise-list">
-            {getFilteredExercises()
-              .slice(0, 3)
-              .map((exercise, index) => (
-                <div key={index} className="exercise-card">
-                  <h3>{exercise.title}</h3>
-                  <p className="exercise-meta">
-                    <span className="badge">{exercise.bodyPart}</span>
-                    <span className="badge">{exercise.type}</span>
-                    <span className="badge">{exercise.level}</span>
-                  </p>
-                  <p className="exercise-description">{exercise.description}</p>
-                  {exercise.youtube_video && (
-                    <a
-                      href={exercise.youtube_video}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="watch-link"
-                    >
-                      Watch Tutorial
-                    </a>
-                  )}
-                </div>
-              ))}
+            {exercisesLoading ? (
+              <div className="loading-exercises">Loading recommendations...</div>
+            ) : (
+              getFilteredExercises()
+                .slice(0, 3)
+                .map((exercise, index) => (
+                  <div key={index} className="exercise-card">
+                    <h3>{exercise.title}</h3>
+                    {exercise.bodyPart && (
+                      <p className="exercise-meta">
+                        <span className="badge">{exercise.bodyPart}</span>
+                        <span className="badge">{exercise.type}</span>
+                        <span className="badge">{exercise.level}</span>
+                      </p>
+                    )}
+                    {exercise.description && (
+                      <p className="exercise-description">{exercise.description}</p>
+                    )}
+                    {exercise.youtube_video && (
+                      <a
+                        href={exercise.youtube_video}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="watch-link"
+                      >
+                        Watch Tutorial
+                      </a>
+                    )}
+                  </div>
+                ))
+            )}
           </div>
         </div>
 
-        <div className="card ai-insights2">
+        <div className="card ai-insights">
           <h2>AI Fitness Insights</h2>
           <div className="insights-container">
-            <div className="insight-item">
-              <h3>Performance Patterns</h3>
-              <p>
-                Your workouts are most effective on weekday mornings. Schedule
-                high-intensity sessions between 7-9am for optimal results.
-              </p>
-            </div>
-            <div className="insight-item">
-              <h3>Recovery Analysis</h3>
-              <p>
-                You're showing signs of needing additional recovery time.
-                Consider adding an extra rest day this week.
-              </p>
-            </div>
-            <div className="insight-item">
-              <h3>Nutrition Impact</h3>
-              <p>
-                Your performance drops on days with less than 100g of protein
-                intake. Consider increasing protein consumption.
-              </p>
-            </div>
+            {insightsLoading ? (
+              <div className="loading-insights">Loading AI insights...</div>
+            ) : (
+              <>
+                <div className="insight-item">
+                  <h3>Performance Patterns</h3>
+                  <p>{aiInsights.performancePatterns}</p>
+                </div>
+                <div className="insight-item">
+                  <h3>Recovery Analysis</h3>
+                  <p>{aiInsights.recoveryAnalysis}</p>
+                </div>
+                <div className="insight-item">
+                  <h3>Nutrition Impact</h3>
+                  <p>{aiInsights.nutritionImpact}</p>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>
