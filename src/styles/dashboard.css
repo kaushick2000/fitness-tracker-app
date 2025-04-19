@@ -7,36 +7,33 @@
  Sheth, Jeet ( 1002175315 ) 
 */
 
-/* Main container styles */
 .app-container {
   font-family: "Inter", sans-serif;
   color: #333;
   background-color: #f5f7fa;
   min-height: 100vh;
-  position: relative; /* Added for proper positioning */
+  position: relative; 
 }
 
-/* Nav positioning fix */
 .app-container > nav {
-  position: fixed; /* Fix Nav to the side */
+  position: fixed;
   top: 0;
   left: 0;
   height: 100%;
-  width: 230px; /* Fixed width for sidebar */
+  width: 230px; 
   z-index: 100;
 }
 
 .dashboard-container {
   max-width: 1200px;
   margin: 0 auto;
-  margin-left: 250px; /* Maintain margin to accommodate sidebar width */
+  margin-left: 250px; 
   background-color: white;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   overflow: hidden;
 }
 
-/* Dashboard header styles */
 .dashboard-header {
   padding: 24px;
   border-bottom: 1px solid #eee;
@@ -52,7 +49,6 @@
   color: #333;
 }
 
-/* Dashboard content styles */
 .dashboard-content {
   padding: 24px;
 }
@@ -69,13 +65,12 @@
   gap: 24px;
 }
 
-/* Top metrics section */
 .top-metrics {
   display: grid;
   grid-template-columns: repeat(
     3,
     1fr
-  ); /* Changed to 3 columns since we removed visualization-image */
+  ); 
   gap: 16px;
 }
 
@@ -136,17 +131,14 @@
   color: #888;
 }
 
-/* Weight card specific */
 .metric-card.weight {
   border-left: 4px solid #0088fe;
 }
 
-/* Steps card specific */
 .metric-card.steps {
   border-left: 4px solid #00c49f;
 }
 
-/* Calories card specific */
 .metric-card.calories {
   border-left: 4px solid #ffbb28;
 }
@@ -167,7 +159,6 @@
   color: #888;
 }
 
-/* Dashboard grid for charts */
 .dashboard-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -182,7 +173,6 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
 }
 
-/* Section headers */
 .section-header {
   display: flex;
   justify-content: space-between;
@@ -209,12 +199,10 @@
   margin-left: 4px;
 }
 
-/* Activity chart */
 .activity-section {
   height: 100%;
 }
 
-/* Progress donut chart */
 .progress-section {
   height: 100%;
 }
@@ -273,7 +261,6 @@
   font-weight: 500;
 }
 
-/* Monthly progress section */
 .right-sidebar {
   background-color: white;
   border-radius: 12px;
@@ -337,7 +324,6 @@
   margin-left: 300px;
 }
 
-/* Media queries for responsiveness */
 @media (max-width: 1024px) {
   .main-content {
     grid-template-columns: 1fr;
@@ -354,11 +340,11 @@
   }
 
   .dashboard-container {
-    margin-left: 80px; /* Adjust margin for collapsed sidebar */
+    margin-left: 80px; 
   }
 
   .app-container > nav {
-    width: 60px; /* Collapsed nav width */
+    width: 60px;
   }
 }
 
@@ -374,8 +360,8 @@
   }
 
   .dashboard-container {
-    margin-left: 0; /* Remove margin when sidebar is hidden */
-    margin-top: 60px; /* Add top margin to avoid overlap with mobile menu button */
+    margin-left: 0; 
+    margin-top: 60px; 
   }
 
   .app-container > nav {

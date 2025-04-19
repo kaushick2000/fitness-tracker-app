@@ -9,7 +9,7 @@
 
 .trainer-container {
     padding: 30px;
-    margin-left: 250px; /* To account for the sidebar */
+    margin-left: 250px; 
     width: calc(100% - 250px);
   }
   

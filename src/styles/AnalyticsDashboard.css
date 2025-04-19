@@ -193,9 +193,7 @@
 .exercise-recommendations {
   margin-top: 1.5rem;
 }
-/* Add these styles to your ActivityLogging.css file */
 
-/* AI Recommendations Styling */
 .ai-recommendations {
   margin: 20px 0;
 }
@@ -322,7 +320,6 @@
   background-color: #4cae4c;
 }
 
-/* Make the AI recommendations stand out */
 .ai-recommendations .recommendations-container h3:before {
   content: "🧠 ";
 }

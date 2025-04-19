@@ -7,7 +7,6 @@
  Sheth, Jeet ( 1002175315 ) 
 */
 
-/* ProfilePage.css */
 .profile-page {
   max-width: 1200px;
   margin: 0 auto;
@@ -23,7 +22,6 @@
   border: 3px solid #fff;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
-/* Profile Header */
 .profile-header {
   display: flex;
   align-items: center;
@@ -131,7 +129,6 @@
   background-color: #e5e5e5;
 }
 
-/* Profile Content */
 .profile-section {
   background-color: white;
   border-radius: 8px;
@@ -154,7 +151,6 @@
   padding: 1.5rem;
 }
 
-/* Info Grid */
 .info-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -181,7 +177,6 @@
   color: #333;
 }
 
-/* Tags */
 .tag-list {
   display: flex;
   flex-wrap: wrap;
@@ -196,7 +191,6 @@
   font-size: 0.9rem;
 }
 
-/* Preferences */
 .preference-list {
   display: flex;
   flex-direction: column;
@@ -225,7 +219,6 @@
   color: #999;
 }
 
-/* Edit Form */
 .edit-form {
   display: flex;
   flex-direction: column;
@@ -297,7 +290,6 @@
   align-items: center;
 }
 
-/* Toggle Switch */
 .toggle-switch {
   position: relative;
   display: inline-block;
@@ -343,7 +335,6 @@ input:checked + .toggle-slider:before {
   transform: translateX(26px);
 }
 
-/* Fitness Stats */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -416,7 +407,6 @@ input:checked + .toggle-slider:before {
   margin-top: 1.5rem;
 }
 
-/* Responsive Adjustments */
 @media (max-width: 768px) {
   .profile-header {
     flex-direction: column;

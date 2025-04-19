@@ -7,7 +7,6 @@
  Sheth, Jeet ( 1002175315 ) 
 */
 
-/* Mobile Menu Button */
 .mobile-menu {
   position: fixed;
   top: 20px;
@@ -25,12 +24,11 @@
   cursor: pointer;
 }
 
-/* Sidebar Styles */
 .sidebar {
   width: 240px;
   background-color: #1E322D;
   color: white;
-  position: fixed; /* Keep it fixed */
+  position: fixed; 
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -64,8 +62,8 @@
   padding: 15px 20px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  text-decoration: none; /* Remove underlines from links */
-  color: inherit; /* Inherit color from parent */
+  text-decoration: none; 
+  color: inherit;
 }
 
 .sidebar .nav-items .nav-item:hover {
@@ -81,14 +79,12 @@
   font-size: 1.2rem;
 }
 
-/* Content Adjustment */
 .content {
-  margin-left: 240px; /* Match sidebar width */
+  margin-left: 240px; 
   padding: 20px;
-  transition: margin-left 0.3s ease; /* Smooth transition */
+  transition: margin-left 0.3s ease; 
 }
 
-/* Responsive Styles */
 @media (max-width: 768px) {
   .sidebar {
     width: 70px;
@@ -109,7 +105,7 @@
   }
 
   .content {
-    margin-left: 70px; /* Match collapsed sidebar width */
+    margin-left: 70px;
   }
 }
 

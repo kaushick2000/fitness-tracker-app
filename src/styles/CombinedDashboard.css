@@ -1,6 +1,11 @@
-/* CombinedDashboard.css */
-
-/* General App Container */
+/* Last Name, First Name - Student ID */
+/* 
+ Suresh, Kaushick ( 1002237680 ), 
+ Sivaprakash, Akshay Prassanna ( 1002198274 ) ,  
+ Sonwane, Pratik ( 1002170610 ) , 
+ Shaik, Arfan ( 1002260039 ) , 
+ Sheth, Jeet ( 1002175315 ) 
+*/
 .app-container {
   display: flex;
   min-height: 100vh;
@@ -10,7 +15,6 @@
   position: relative;
 }
 
-/* Sidebar Navigation */
 .app-container > nav {
   position: fixed;
   top: 0;
@@ -22,7 +26,6 @@
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.04);
 }
 
-/* Main Dashboard Container */
 .dashboard-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -37,7 +40,6 @@
   flex: 1;
 }
 
-/* Dashboard Header */
 .dashboard-header {
   padding: 24px;
   border-bottom: 1px solid #eee;
@@ -53,7 +55,6 @@
   color: #333;
 }
 
-/* Dashboard Content */
 .dashboard-content {
   padding: 24px;
   flex: 1;
@@ -71,7 +72,6 @@
   gap: 24px;
 }
 
-/* Top Metrics */
 .top-metrics {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -251,14 +251,12 @@
   margin: 0 0 20px 0;
 }
 
-/* Pie Chart and Bar Chart containers */
 .recharts-responsive-container {
   width: 100% !important;
   height: 200px !important;
   margin-bottom: 24px;
 }
 
-/* Responsive Design */
 @media (max-width: 1024px) {
   .main-content {
     grid-template-columns: 1fr;

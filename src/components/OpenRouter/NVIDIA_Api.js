@@ -1,8 +1,15 @@
-// OpenRouter/NVIDIA_API.js
+/* Last Name, First Name - Student ID */
+/* 
+ Suresh, Kaushick ( 1002237680 ), 
+ Sivaprakash, Akshay Prassanna ( 1002198274 ) ,  
+ Sonwane, Pratik ( 1002170610 ) , 
+ Shaik, Arfan ( 1002260039 ) , 
+ Sheth, Jeet ( 1002175315 ) 
+*/
 
 // Use environment variables in production - not hardcoded
 const API_KEY =
-  "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";
+  "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";
 const MODEL = "nvidia/llama-3.1-nemotron-nano-8b-v1:free";
 const API_URL = "https://openrouter.ai/api/v1/chat/completions";
 

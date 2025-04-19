@@ -13,7 +13,6 @@
   line-height: 1.6;
 }
 
-/* Header Styles */
 .homepage-header {
   display: flex;
   justify-content: space-between;
@@ -70,7 +69,6 @@
   background-color: #3e8e41;
 }
 
-/* Hero Section */
 .hero-section {
   height: 100vh;
   background-size: cover;
@@ -118,7 +116,6 @@
   background-color: #3e8e41;
 }
 
-/* Description Section */
 .description-section {
   padding: 5rem 2rem;
   background-color: #f9f9f9;
@@ -315,7 +312,6 @@
   background-color: #3e8e41;
 }
 
-/* Testimonials Section */
 .testimonials-section {
   padding: 5rem 2rem;
   background-color: #f0f9f1;
@@ -370,7 +366,6 @@
   color: #4caf50;
 }
 
-/* Enhanced Footer */
 .homepage-footer {
   background-color: #333;
   color: white;
@@ -523,7 +518,7 @@
   .footer-links a {
     font-size: 0.9rem;
   }
-  /* Visualization Section Styles */
+
   .visualization-section {
     padding: 5rem 2rem;
     background-color: #f0f9f1;
@@ -614,7 +609,6 @@
     transform: scale(1.02);
   }
 
-  /* Responsive styles for visualization section */
   @media (max-width: 1024px) {
     .visualization-content {
       gap: 2rem;

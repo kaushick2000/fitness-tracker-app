@@ -7,69 +7,67 @@
  Sheth, Jeet ( 1002175315 ) 
 */
 
-/* Reset default margins and ensure box-sizing is consistent */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Mobile-first approach: Base styles for small screens (up to 768px) */
 .signup-container {
-  width: 90%; /* Use percentage for flexibility */
-  max-width: 400px; /* Limit max width for larger screens */
-  margin: 0 auto; /* Center horizontally */
-  padding: 1rem; /* Use rem for scalability */
+  width: 90%;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 1rem; 
   text-align: center;
 }
 
 .signup-container h2 {
-  margin-bottom: 1.5rem; /* Use rem for scalability */
+  margin-bottom: 1.5rem;
   color: #333;
-  font-size: 1.5rem; /* Responsive font size */
+  font-size: 1.5rem; 
 }
 
 .signup-form, .mfa-verification-container, .mfa-setup-container {
   background: #fff;
-  padding: 1.5rem; /* Use rem for scalability */
-  border-radius: 0.5rem; /* Use rem for scalability */
-  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1); /* Use rem for scalability */
+  padding: 1.5rem;
+  border-radius: 0.5rem; 
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1); 
 }
 
 .form-group {
-  margin-bottom: 1rem; /* Use rem for scalability */
+  margin-bottom: 1rem;
   text-align: left;
 }
 
 .form-group label {
   display: block;
-  margin-bottom: 0.5rem; /* Use rem for scalability */
+  margin-bottom: 0.5rem;
   font-weight: bold;
   color: #555;
-  font-size: 0.875rem; /* Responsive font size */
+  font-size: 0.875rem; 
 }
 
 .form-group input {
   width: 100%;
-  padding: 0.75rem; /* Use rem for scalability */
+  padding: 0.75rem; 
   border: 1px solid #ddd;
-  border-radius: 0.25rem; /* Use rem for scalability */
+  border-radius: 0.25rem; 
   box-sizing: border-box;
-  font-size: 0.875rem; /* Responsive font size */
+  font-size: 0.875rem;
 }
 
 .form-group small {
   color: #777;
-  font-size: 0.75rem; /* Responsive font size */
+  font-size: 0.75rem;
 }
 
 .signup-button, .secondary-button {
   width: 100%;
-  padding: 0.75rem; /* Use rem for scalability */
+  padding: 0.75rem; 
   border: none;
-  border-radius: 0.25rem; /* Use rem for scalability */
+  border-radius: 0.25rem; 
   cursor: pointer;
-  font-size: 1rem; /* Responsive font size */
+  font-size: 1rem; 
   transition: background-color 0.3s;
 }
 
@@ -90,7 +88,7 @@
 .secondary-button {
   background-color: #6c757d;
   color: white;
-  margin-top: 1rem; /* Use rem for scalability */
+  margin-top: 1rem;
 }
 
 .secondary-button:hover {
@@ -98,11 +96,11 @@
 }
 
 .error-message, .success-message {
-  padding: 0.75rem; /* Use rem for scalability */
-  margin-bottom: 1rem; /* Use rem for scalability */
-  border-radius: 0.25rem; /* Use rem for scalability */
+  padding: 0.75rem; 
+  margin-bottom: 1rem;
+  border-radius: 0.25rem;
   border: 1px solid;
-  font-size: 0.875rem; /* Responsive font size */
+  font-size: 0.875rem;
 }
 
 .error-message {
@@ -117,10 +115,9 @@
   border-color: #c8e6c9;
 }
 
-/* Optional: Styling for react-toastify (if used) */
 .Toastify__toast {
-  border-radius: 0.25rem; /* Use rem for scalability */
-  font-size: 0.875rem; /* Responsive font size */
+  border-radius: 0.25rem; 
+  font-size: 0.875rem; 
 }
 
 .Toastify__toast--error {
@@ -133,45 +130,43 @@
   color: #2e7d32;
 }
 
-/* Tablet and Desktop (min-width: 768px) */
 @media (min-width: 768px) {
   .signup-container {
     width: 80%;
-    max-width: 500px; /* Slightly larger max-width for tablets/desktops */
-    padding: 2rem; /* Increase padding for larger screens */
+    max-width: 500px;
+    padding: 2rem;
   }
 
   .signup-container h2 {
-    font-size: 2rem; /* Larger heading for desktop */
+    font-size: 2rem; 
   }
 
   .form-group label {
-    font-size: 1rem; /* Larger label text for desktop */
+    font-size: 1rem;
   }
 
   .form-group input, .form-group small {
-    font-size: 1rem; /* Larger input and small text for desktop */
+    font-size: 1rem; 
   }
 
   .signup-button, .secondary-button {
-    font-size: 1.125rem; /* Larger button text for desktop */
-    padding: 1rem; /* Increase padding for larger screens */
+    font-size: 1.125rem; 
+    padding: 1rem;
   }
 
   .error-message, .success-message {
-    font-size: 1rem; /* Larger message text for desktop */
+    font-size: 1rem;
   }
 }
 
-/* Large Desktop (min-width: 1024px) */
 @media (min-width: 1024px) {
   .signup-container {
     width: 70%;
-    max-width: 600px; /* Even larger max-width for large desktops */
-    padding: 2.5rem; /* Further increase padding for larger screens */
+    max-width: 600px;
+    padding: 2.5rem;
   }
 
   .signup-form, .mfa-verification-container, .mfa-setup-container {
-    padding: 2rem; /* Increase padding for larger screens */
+    padding: 2rem; 
   }
 }

@@ -1,9 +1,15 @@
-/* Chat Component Styles - Add to your CSS file */
-
+/* Last Name, First Name - Student ID */
+/* 
+ Suresh, Kaushick ( 1002237680 ), 
+ Sivaprakash, Akshay Prassanna ( 1002198274 ) ,  
+ Sonwane, Pratik ( 1002170610 ) , 
+ Shaik, Arfan ( 1002260039 ) , 
+ Sheth, Jeet ( 1002175315 ) 
+*/
 .chat-container {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 64px); /* Adjust based on your header height */
+  height: calc(100vh - 64px); 
   background-color: #f5f7fa;
   padding: 0;
   width: 100%;
