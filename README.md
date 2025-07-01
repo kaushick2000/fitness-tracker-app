@@ -1,21 +1,6 @@
 # Fitness Tracker Application
 
-## Hosted at :
 
-- **https://axs8276.uta.cloud/**
-
-## Team Members
-
-- _Suresh, Kaushick_ (1002237680)
-- _Sivaprakash, Akshay Prassanna_ (1002198274)
-- _Sonwane, Pratik_ (1002170610)
-- _Shaik, Arfan_ (1002260039)
-- _Sheth, Jeet_ (1002175315)
-
-## Login Credentials (For Testing Purposes)
-
-- _Username:_ akshay.prassanna08@gmail.com
-- _Password:_ test123
 
 ## Frontend Runs on : http://localhost:3001
 
